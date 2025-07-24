@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -6,6 +8,7 @@ export default function Home() {
         An open source alternative to v0.dev. Build full-stack apps, ask
         questions, and more.
       </p>
+      <Button>Get Started</Button>
     </div>
   );
 }
