@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "2.0.0-beta.8",
+    "@ai-sdk/react": "2.0.0-beta.26",
     "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -38,6 +40,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.52.1",
+    "ai": "5.0.0-beta.26",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -56,7 +59,8 @@
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",
-    "zod": "^4.0.8"
+    "zod": "^4.0.8",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
