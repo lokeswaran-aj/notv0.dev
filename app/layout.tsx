@@ -31,7 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
-        <Analytics />
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   );
