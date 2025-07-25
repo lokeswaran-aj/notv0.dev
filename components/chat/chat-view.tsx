@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/chat-container";
 import { Loader } from "@/components/ui/loader";
 import { Message } from "@/components/ui/message";
+import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
-import { useInitialMessageStore } from "@/stores/initial-message";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useParams } from "next/navigation";
@@ -18,12 +18,7 @@ import { useEffect, useRef, useState } from "react";
 
 export const ChatView = () => {
   const [input, setInput] = useState("");
-  const initialMessage = useInitialMessageStore(
-    (state) => state.initialMessage
-  );
-  const setInitialMessage = useInitialMessageStore(
-    (state) => state.setInitialMessage
-  );
+  const { getStoredMessage, clearInitialMessage } = useInitialMessage();
   const { id } = useParams();
   const didRun = useRef(false);
   const { messages, status, stop, sendMessage } = useChat({
@@ -46,14 +41,17 @@ export const ChatView = () => {
     if (didRun.current) return;
     didRun.current = true;
 
-    if (initialMessage) {
+    const storedMessage = getStoredMessage();
+    console.log("🚀 ~ ChatView ~ storedMessage:", storedMessage);
+
+    if (storedMessage) {
       sendMessage({
         role: "user",
-        parts: [{ type: "text", text: initialMessage }],
+        parts: [{ type: "text", text: storedMessage }],
       });
-      setInitialMessage(null);
+      clearInitialMessage();
     }
-  }, []);
+  }, [getStoredMessage, clearInitialMessage, sendMessage]);
 
   return (
     <div className="relative flex h-full flex-col gap-4 border border-secondary rounded-lg py-4">
