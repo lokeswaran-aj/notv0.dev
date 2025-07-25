@@ -1,8 +1,8 @@
 import { signOutAction } from "@/lib/actions/auth";
 import { createClient } from "@/utils/supabase/server";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { Logo } from "./ui/logo";
 
 export const Header = async () => {
   const supabase = await createClient();
@@ -15,7 +15,7 @@ export const Header = async () => {
       <div className="relative mx-auto flex h-full max-w-full items-center justify-between bg-transparent px-4 sm:px-6 lg:bg-transparent lg:px-8">
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image src="/avatars/ai.png" alt="Not V0" width={20} height={20} />
+            <Logo className="h-6 w-auto" />
             <h1 className="text-2xl font-bold">Not V0</h1>
           </div>
           <div className="flex items-center gap-2">

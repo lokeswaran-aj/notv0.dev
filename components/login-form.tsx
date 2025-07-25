@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { signInWithGoogle } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { Logo } from "./ui/logo";
 
 export function LoginForm({
   className,
@@ -29,9 +29,9 @@ export function LoginForm({
 
       const data = await signInWithGoogle(supabase, next || undefined);
 
-      // Redirect to the provider URL
       if (data?.url) {
         window.location.href = data.url;
+        return;
       }
     } catch (err: unknown) {
       console.error("Error signing in with Google:", err);
@@ -39,7 +39,6 @@ export function LoginForm({
         (err as Error).message ||
           "An unexpected error occurred. Please try again."
       );
-    } finally {
       setIsLoading(false);
     }
   }
@@ -48,7 +47,7 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col gap-6 text-center">
         <div className="flex items-center justify-center gap-4">
-          <Image src="/avatars/ai.png" alt="Not V0" width={32} height={32} />
+          <Logo className="h-8 w-auto" />
           <h1 className="text-4xl font-bold">Welcome to Not V0</h1>
         </div>
         <p className="text-muted-foreground">Sign in with Google to continue</p>
