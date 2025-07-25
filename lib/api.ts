@@ -1,5 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
+const APP_DOMAIN = "https://notv0.dev";
+
 export async function signInWithGoogle(
   supabase: SupabaseClient,
   returnUrl?: string
@@ -12,7 +14,13 @@ export async function signInWithGoogle(
       ? "http://localhost:3000"
       : typeof window !== "undefined"
       ? window.location.origin
-      : `https://${process.env.NEXT_PUBLIC_DOMAIN}`;
+      : process.env.NEXT_PUBLIC_VERCEL_URL
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : APP_DOMAIN;
+    console.log(
+      "🚀 ~ signInWithGoogle ~ process.env.NEXT_PUBLIC_VERCEL_URL:",
+      process.env.NEXT_PUBLIC_VERCEL_URL
+    );
 
     // Include the next parameter in the callback URL if provided
     const callbackUrl = returnUrl
