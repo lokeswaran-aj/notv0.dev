@@ -10,11 +10,7 @@ export async function signInWithGoogle(
     const isDev = process.env.NODE_ENV === "development";
 
     // Get base URL dynamically (will work in both browser and server environments)
-    const baseUrl = isDev
-      ? "http://localhost:3000"
-      : typeof window !== "undefined"
-      ? window.location.origin
-      : APP_DOMAIN;
+    const baseUrl = isDev ? "http://localhost:3000" : APP_DOMAIN;
 
     // Include the next parameter in the callback URL if provided
     const callbackUrl = returnUrl
