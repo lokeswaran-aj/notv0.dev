@@ -17,11 +17,7 @@ export const Hero = () => {
     router.push(`/c/${crypto.randomUUID()}`);
     setIsLoading(false);
   };
-  console.log(
-    "🚀 ~ signInWithGoogle ~ isDev:",
-    process.env.NODE_ENV,
-    window.location.origin
-  );
+  console.log("🚀 ~ signInWithGoogle ~ isDev:", process.env.NODE_ENV);
 
   return (
     <main className="flex flex-col items-center gap-8 pt-80 h-dvh w-full overflow-hidden">
