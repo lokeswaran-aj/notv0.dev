@@ -17,7 +17,7 @@ export const UserMessage = (props: Props) => {
         if (part.type === "text") {
           return (
             <Fragment key={`${message.id}-${part.type}-${index}`}>
-              <MessageContent className="bg-muted min-w-fit text-primary max-w-[85%] rounded-3xl px-5 py-2.5 sm:max-w-[75%]">
+              <MessageContent className="bg-muted min-w-fit text-primary max-w-[85%] rounded-3xl px-3 py-1.5 sm:max-w-[75%]">
                 {part.text}
               </MessageContent>
               <MessageActions
