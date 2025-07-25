@@ -16,7 +16,6 @@ export const AiMessage = (props: Props) => {
     <div className="group flex w-full flex-col gap-0">
       {message.parts.map((part, index) => {
         if (part.type === "text") {
-          console.log("🚀 ~ AiMessage ~ part.type:", part.text);
           return (
             <MessageContent
               key={`${message.id}-${part.type}-${index}`}

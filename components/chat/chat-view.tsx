@@ -42,7 +42,6 @@ export const ChatView = () => {
     didRun.current = true;
 
     const storedMessage = getStoredMessage();
-    console.log("🚀 ~ ChatView ~ storedMessage:", storedMessage);
 
     if (storedMessage) {
       sendMessage({

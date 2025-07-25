@@ -14,10 +14,10 @@ export const Header = async () => {
     <header className="h-14 fixed top-0 right-0 left-0 z-50">
       <div className="relative mx-auto flex h-full max-w-full items-center justify-between bg-transparent px-4 sm:px-6 lg:bg-transparent lg:px-8">
         <div className="flex flex-1 items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <Logo className="h-6 w-auto" />
             <h1 className="text-2xl font-bold">Not V0</h1>
-          </div>
+          </Link>
           <div className="flex items-center gap-2">
             {user ? (
               <div className="flex items-center gap-2">
