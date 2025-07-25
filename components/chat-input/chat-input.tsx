@@ -13,7 +13,7 @@ type Props = {
   inputAutoFocus?: boolean;
   input: string;
   setInput: (input: string) => void;
-  isLoading: boolean;
+  isStreaming: boolean;
   onSubmit: () => void;
   stop?: () => void;
 };
@@ -22,7 +22,7 @@ export const ChatInput = (props: Props) => {
   const {
     input,
     setInput,
-    isLoading,
+    isStreaming,
     onSubmit,
     stop,
     inputAutoFocus = false,
@@ -31,7 +31,7 @@ export const ChatInput = (props: Props) => {
     <PromptInput
       value={input}
       onValueChange={setInput}
-      isLoading={isLoading}
+      isLoading={isStreaming}
       onSubmit={onSubmit}
       className="w-full max-w-(--breakpoint-md) p-2"
       maxHeight={120}
@@ -43,9 +43,9 @@ export const ChatInput = (props: Props) => {
       />
       <PromptInputActions className="justify-end pt-2">
         <PromptInputAction
-          tooltip={isLoading ? "Stop generation" : "Send message"}
+          tooltip={isStreaming ? "Stop generation" : "Send message"}
         >
-          {isLoading ? (
+          {isStreaming ? (
             <Button
               variant="default"
               size="icon"

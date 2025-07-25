@@ -105,7 +105,7 @@ export const ChatView = () => {
           input={input}
           setInput={setInput}
           onSubmit={handleSubmit}
-          isLoading={status === "submitted"}
+          isStreaming={status === "submitted" || status === "streaming"}
           stop={stop}
         />
       </div>

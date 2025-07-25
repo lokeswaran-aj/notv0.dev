@@ -30,7 +30,7 @@ export const Hero = () => {
         inputAutoFocus={true}
         input={input}
         setInput={setInput}
-        isLoading={isLoading}
+        isStreaming={isLoading}
         onSubmit={handleSubmit}
       />
     </main>
