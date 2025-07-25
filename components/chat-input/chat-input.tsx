@@ -10,6 +10,7 @@ import {
 import { ArrowUp, Square } from "lucide-react";
 
 type Props = {
+  inputAutoFocus?: boolean;
   input: string;
   setInput: (input: string) => void;
   isLoading: boolean;
@@ -18,19 +19,27 @@ type Props = {
 };
 
 export const ChatInput = (props: Props) => {
-  const { input, setInput, isLoading, onSubmit, stop } = props;
+  const {
+    input,
+    setInput,
+    isLoading,
+    onSubmit,
+    stop,
+    inputAutoFocus = false,
+  } = props;
   return (
     <PromptInput
       value={input}
       onValueChange={setInput}
       isLoading={isLoading}
       onSubmit={onSubmit}
-      className="w-full max-w-(--breakpoint-md) p-4"
+      className="w-full max-w-(--breakpoint-md) p-2"
       maxHeight={120}
     >
       <PromptInputTextarea
         placeholder="Can you build a modern AI SAAS landing page?"
         className="dark:bg-background"
+        autoFocus={inputAutoFocus}
       />
       <PromptInputActions className="justify-end pt-2">
         <PromptInputAction
