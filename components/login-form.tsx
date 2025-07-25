@@ -4,6 +4,7 @@ import { signInWithGoogle } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm({
@@ -12,6 +13,8 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
 
   async function handleSignInWithGoogle() {
     const supabase = createClient();
@@ -24,7 +27,7 @@ export function LoginForm({
       setIsLoading(true);
       setError(null);
 
-      const data = await signInWithGoogle(supabase);
+      const data = await signInWithGoogle(supabase, next || undefined);
 
       // Redirect to the provider URL
       if (data?.url) {
@@ -40,6 +43,7 @@ export function LoginForm({
       setIsLoading(false);
     }
   }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col gap-6 text-center">
@@ -48,10 +52,12 @@ export function LoginForm({
           <h1 className="text-4xl font-bold">Welcome to Not V0</h1>
         </div>
         <p className="text-muted-foreground">Sign in with Google to continue</p>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <Button
           onClick={handleSignInWithGoogle}
           variant="outline"
           className="w-full"
+          disabled={isLoading}
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path
@@ -59,7 +65,7 @@ export function LoginForm({
               fill="currentColor"
             />
           </svg>
-          Continue with Google
+          {isLoading ? "Signing in..." : "Continue with Google"}
         </Button>
       </div>
     </div>

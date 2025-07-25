@@ -1,6 +1,9 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export async function signInWithGoogle(supabase: SupabaseClient) {
+export async function signInWithGoogle(
+  supabase: SupabaseClient,
+  returnUrl?: string
+) {
   try {
     const isDev = process.env.NODE_ENV === "development";
 
@@ -11,10 +14,15 @@ export async function signInWithGoogle(supabase: SupabaseClient) {
       ? window.location.origin
       : `https://${process.env.NEXT_PUBLIC_DOMAIN}`;
 
+    // Include the next parameter in the callback URL if provided
+    const callbackUrl = returnUrl
+      ? `${baseUrl}/auth/callback?next=${encodeURIComponent(returnUrl)}`
+      : `${baseUrl}/auth/callback`;
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${baseUrl}/auth/callback`,
+        redirectTo: callbackUrl,
         queryParams: {
           access_type: "offline",
           prompt: "consent",

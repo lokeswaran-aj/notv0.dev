@@ -30,7 +30,17 @@ export const updateSession = async (request: NextRequest) => {
   );
 
   // refreshing the auth token
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const url = request.nextUrl;
+  const isProtectedRoute = url.pathname.startsWith("/c/");
+  if (isProtectedRoute && !user) {
+    const authUrl = new URL("/auth", request.url);
+    authUrl.searchParams.set("next", url.pathname);
+    return NextResponse.redirect(authUrl);
+  }
 
   return supabaseResponse;
 };
