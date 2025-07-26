@@ -32,7 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
-        <Toaster />
+        <Toaster richColors position="top-center" />
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
