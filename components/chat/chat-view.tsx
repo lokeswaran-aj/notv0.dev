@@ -13,6 +13,7 @@ import { Message } from "@/components/ui/message";
 import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
 import { useChatTitleStore } from "@/stores/chat";
+import { createChatForUser } from "@/utils/supabase/repositories/chat";
 import { useChat, experimental_useObject as useObject } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useParams } from "next/navigation";
@@ -35,10 +36,12 @@ export const ChatView = () => {
   const { submit } = useObject({
     api: "/api/title",
     schema: chatTitleSchema,
-    onFinish: ({ object }) => {
+    id: id as string,
+    onFinish: async ({ object }) => {
       if (object?.title) {
         setTitle(object.title);
       }
+      await createChatForUser(id as string, object?.title ?? "New Chat");
     },
   });
 
