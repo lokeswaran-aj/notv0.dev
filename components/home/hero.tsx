@@ -3,6 +3,7 @@
 import { useInitialMessage } from "@/hooks/use-initial-message";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { v7 as uuidv7 } from "uuid";
 import { ChatInput } from "../chat-input/chat-input";
 
 export const Hero = () => {
@@ -14,7 +15,7 @@ export const Hero = () => {
     if (!initialMessage.trim()) return;
 
     setIsLoading(true);
-    router.push(`/c/${crypto.randomUUID()}`);
+    router.push(`/c/${uuidv7()}`);
     setIsLoading(false);
   };
 

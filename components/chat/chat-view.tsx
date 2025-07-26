@@ -1,6 +1,5 @@
 "use client";
 
-import { chatTitleSchema } from "@/app/api/title/schema";
 import { ChatInput } from "@/components/chat-input/chat-input";
 import { AiMessage } from "@/components/messages/ai-message";
 import { UserMessage } from "@/components/messages/user-message";
@@ -13,11 +12,12 @@ import { Message } from "@/components/ui/message";
 import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
 import { useChatTitleStore } from "@/stores/chat";
-import { createChatForUser } from "@/utils/supabase/repositories/chat";
-import { useChat, experimental_useObject as useObject } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, UIMessage } from "ai";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { v7 as uuidv7 } from "uuid";
 
 export const ChatView = () => {
   const [input, setInput] = useState("");
@@ -25,29 +25,33 @@ export const ChatView = () => {
   const { getStoredMessage, clearInitialMessage } = useInitialMessage();
   const { id } = useParams();
   const didRun = useRef(false);
+  const storedMessage = getStoredMessage();
 
   const { messages, status, stop, sendMessage } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
+      prepareSendMessagesRequest({ messages, id, body }) {
+        return {
+          body: {
+            chatId: id,
+            message: messages.at(-1),
+            ...body,
+          },
+        };
+      },
     }),
     id: id as string,
-  });
-
-  const { submit } = useObject({
-    api: "/api/title",
-    schema: chatTitleSchema,
-    id: id as string,
-    onFinish: async ({ object }) => {
-      if (object?.title) {
-        setTitle(object.title);
-      }
-      await createChatForUser(id as string, object?.title ?? "New Chat");
+    onError: (error) => {
+      console.error(error.message);
+      const errorMessage = JSON.parse(error.message).message;
+      toast.error(errorMessage);
     },
   });
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
     await sendMessage({
+      id: uuidv7(),
       role: "user",
       parts: [{ type: "text", text: input.trim() }],
     });
@@ -59,14 +63,13 @@ export const ChatView = () => {
     didRun.current = true;
     setTitle("New Chat");
 
-    const storedMessage = getStoredMessage();
-
     if (storedMessage) {
-      sendMessage({
+      const initialMessage: UIMessage = {
+        id: uuidv7(),
         role: "user",
         parts: [{ type: "text", text: storedMessage }],
-      });
-      submit(storedMessage);
+      };
+      sendMessage(initialMessage);
       clearInitialMessage();
     }
   }, [getStoredMessage, clearInitialMessage, sendMessage]);

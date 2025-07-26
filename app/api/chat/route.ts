@@ -1,25 +1,118 @@
+import {
+  createChat,
+  createMessage,
+  getChatById,
+  getMessagesByChatId,
+} from "@/utils/supabase/actions";
+import { createClient } from "@/utils/supabase/server";
 import { anthropic, AnthropicProviderOptions } from "@ai-sdk/anthropic";
-import { convertToModelMessages, streamText } from "ai";
-import { NextRequest } from "next/server";
+import {
+  convertToModelMessages,
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+  smoothStream,
+  streamText,
+  UIMessage,
+} from "ai";
+import { NextRequest, NextResponse } from "next/server";
+import { v7 as uuidv7 } from "uuid";
+import { z } from "zod";
+import { generateTitleFromUserMessage } from "./actions";
+
+export const postRequestBodySchema = z.object({
+  chatId: z.uuid(),
+  message: z.object({
+    id: z.uuid(),
+    role: z.enum(["user"]),
+    parts: z.array(
+      z.object({
+        type: z.enum(["text"]),
+        text: z.string().min(1).max(2000),
+      })
+    ),
+  }),
+});
 
 export const POST = async (req: NextRequest) => {
-  const { messages } = await req.json();
+  let requestBody: z.infer<typeof postRequestBodySchema>;
+  try {
+    const json = await req.json();
+    requestBody = postRequestBodySchema.parse(json);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { message: "Invalid request body" },
+      { status: 400 }
+    );
+  }
 
-  const result = streamText({
-    model: anthropic("claude-3-7-sonnet-20250219"),
-    system: "You are a helpful assistant.",
-    messages: convertToModelMessages(messages),
-    providerOptions: {
-      anthropic: {
-        thinking: {
-          type: "enabled",
-          budgetTokens: 1024,
-        },
-      } satisfies AnthropicProviderOptions,
-    },
-    onError: (error) => {
-      console.error(error);
-    },
+  const { chatId, message } = requestBody;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ message: "User not found" }, { status: 401 });
+  }
+
+  const chat = await getChatById(chatId);
+  if (!chat) {
+    const title = await generateTitleFromUserMessage(message.parts[0].text);
+    await createChat(chatId, user.id, title);
+  } else {
+    if (chat.user_id !== user.id) {
+      return NextResponse.json(
+        { message: "You are not authorized to access this chat" },
+        { status: 403 }
+      );
+    }
+  }
+
+  await createMessage(chatId, message);
+  const messagesFromDb = await getMessagesByChatId(chatId);
+
+  const response = createUIMessageStreamResponse({
+    stream: createUIMessageStream({
+      execute: ({ writer: dataStream }) => {
+        const result = streamText({
+          model: anthropic.languageModel("claude-3-7-sonnet-20250219"),
+          system: "You are a helpful assistant.",
+          messages: convertToModelMessages(
+            messagesFromDb as unknown as UIMessage[]
+          ),
+          providerOptions: {
+            anthropic: {
+              thinking: {
+                type: "enabled",
+                budgetTokens: 1024,
+              },
+            } satisfies AnthropicProviderOptions,
+          },
+          experimental_transform: smoothStream({ chunking: "word" }),
+        });
+
+        result.consumeStream();
+
+        dataStream.merge(
+          result.toUIMessageStream({
+            sendReasoning: true,
+          })
+        );
+      },
+      generateId: uuidv7,
+      onFinish: async ({ messages }) => {
+        await Promise.all(
+          messages.map(async (message) => {
+            await createMessage(chatId, message);
+          })
+        );
+      },
+      onError: (error) => {
+        console.error(error);
+        return "Oops, an error occurred!";
+      },
+    }),
   });
-  return result.toUIMessageStreamResponse();
+  return response;
 };
