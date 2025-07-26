@@ -6,6 +6,6 @@ interface ChatStore {
 }
 
 export const useChatTitleStore = create<ChatStore>((set) => ({
-  title: "",
+  title: "New Chat",
   setTitle: (title) => set({ title }),
 }));
