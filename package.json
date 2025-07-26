@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:push": "supabase db push",
+    "db:generate": "supabase diff -f"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "2.0.0-beta.8",
