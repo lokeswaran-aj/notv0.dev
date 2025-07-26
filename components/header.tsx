@@ -1,7 +1,6 @@
 import { signOutAction } from "@/lib/actions/auth";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
-import { ChatTitle } from "./chat/chat-title";
 import { Button } from "./ui/button";
 import { Logo } from "./ui/logo";
 
@@ -19,7 +18,6 @@ export const Header = async () => {
             <Logo className="h-6 w-auto" />
             <h1 className="text-2xl font-bold">Not V0</h1>
           </Link>
-          <ChatTitle />
           <div className="flex items-center gap-2">
             {user ? (
               <div className="flex items-center gap-2">

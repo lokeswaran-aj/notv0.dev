@@ -11,7 +11,6 @@ import { Loader } from "@/components/ui/loader";
 import { Message } from "@/components/ui/message";
 import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
-import { useChatTitleStore } from "@/stores/chat";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import { useParams } from "next/navigation";
@@ -21,7 +20,6 @@ import { v7 as uuidv7 } from "uuid";
 
 export const ChatView = () => {
   const [input, setInput] = useState("");
-  const setTitle = useChatTitleStore((state) => state.setTitle);
   const { getStoredMessage, clearInitialMessage } = useInitialMessage();
   const { id } = useParams();
   const didRun = useRef(false);
@@ -61,7 +59,6 @@ export const ChatView = () => {
   useEffect(() => {
     if (didRun.current) return;
     didRun.current = true;
-    setTitle("New Chat");
 
     if (storedMessage) {
       const initialMessage: UIMessage = {
