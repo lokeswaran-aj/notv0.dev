@@ -104,6 +104,7 @@ export const ChatView = () => {
           onSubmit={handleSubmit}
           isStreaming={status === "submitted" || status === "streaming"}
           stop={stop}
+          placeholder="Ask follow up question..."
         />
       </div>
     </div>

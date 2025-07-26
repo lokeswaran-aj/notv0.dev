@@ -16,6 +16,7 @@ type Props = {
   isStreaming: boolean;
   onSubmit: () => void;
   stop?: () => void;
+  placeholder?: string;
 };
 
 export const ChatInput = (props: Props) => {
@@ -26,6 +27,7 @@ export const ChatInput = (props: Props) => {
     onSubmit,
     stop,
     inputAutoFocus = false,
+    placeholder = "Can you build a modern AI SAAS landing page?",
   } = props;
   return (
     <PromptInput
@@ -37,7 +39,7 @@ export const ChatInput = (props: Props) => {
       maxHeight={120}
     >
       <PromptInputTextarea
-        placeholder="Can you build a modern AI SAAS landing page?"
+        placeholder={placeholder}
         className="dark:bg-background"
         autoFocus={inputAutoFocus}
       />
