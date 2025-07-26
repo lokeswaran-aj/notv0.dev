@@ -1,20 +1,14 @@
 "use client";
 
 import { useInitialMessage } from "@/hooks/use-initial-message";
-import { useChatTitleStore } from "@/stores/chat";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChatInput } from "../chat-input/chat-input";
 
 export const Hero = () => {
   const router = useRouter();
   const { initialMessage, setInitialMessage } = useInitialMessage();
   const [isLoading, setIsLoading] = useState(false);
-  const setTitle = useChatTitleStore((state) => state.setTitle);
-
-  useEffect(() => {
-    setTitle("New Chat");
-  }, [setTitle]);
 
   const handleSubmit = () => {
     if (!initialMessage.trim()) return;

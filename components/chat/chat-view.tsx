@@ -54,6 +54,7 @@ export const ChatView = () => {
   useEffect(() => {
     if (didRun.current) return;
     didRun.current = true;
+    setTitle("New Chat");
 
     const storedMessage = getStoredMessage();
 
