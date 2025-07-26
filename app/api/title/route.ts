@@ -9,8 +9,8 @@ export const POST = async (req: NextRequest) => {
   const { object } = await generateObject({
     model: anthropic("claude-3-7-sonnet-20250219"),
     schema: chatTitleSchema,
-    system: "Generate a based on the user's prompt.",
-    prompt,
+    system: "Generate a title for a chat based on the user's prompt.",
+    prompt: `Here is the user's first message: ${prompt}`,
   });
 
   return NextResponse.json(object);
