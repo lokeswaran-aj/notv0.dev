@@ -19,7 +19,7 @@ import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
 import { generateTitleFromUserMessage } from "./actions";
 
-export const postRequestBodySchema = z.object({
+const postRequestBodySchema = z.object({
   chatId: z.uuid(),
   message: z.object({
     id: z.uuid(),
