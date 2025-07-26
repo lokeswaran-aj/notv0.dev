@@ -1,5 +1,6 @@
 "use client";
 
+import { chatTitleSchema } from "@/app/api/title/schema";
 import { ChatInput } from "@/components/chat-input/chat-input";
 import { AiMessage } from "@/components/messages/ai-message";
 import { UserMessage } from "@/components/messages/user-message";
@@ -11,21 +12,34 @@ import { Loader } from "@/components/ui/loader";
 import { Message } from "@/components/ui/message";
 import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
-import { useChat } from "@ai-sdk/react";
+import { useChatTitleStore } from "@/stores/chat";
+import { useChat, experimental_useObject as useObject } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export const ChatView = () => {
   const [input, setInput] = useState("");
+  const setTitle = useChatTitleStore((state) => state.setTitle);
   const { getStoredMessage, clearInitialMessage } = useInitialMessage();
   const { id } = useParams();
   const didRun = useRef(false);
+
   const { messages, status, stop, sendMessage } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
     id: id as string,
+  });
+
+  const { submit } = useObject({
+    api: "/api/title",
+    schema: chatTitleSchema,
+    onFinish: ({ object }) => {
+      if (object?.title) {
+        setTitle(object.title);
+      }
+    },
   });
 
   const handleSubmit = async () => {
@@ -48,6 +62,7 @@ export const ChatView = () => {
         role: "user",
         parts: [{ type: "text", text: storedMessage }],
       });
+      submit(storedMessage);
       clearInitialMessage();
     }
   }, [getStoredMessage, clearInitialMessage, sendMessage]);
