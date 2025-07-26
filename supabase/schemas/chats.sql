@@ -1,7 +1,7 @@
 -- Create a table for chats
 create table chats (
   id uuid not null primary key,
-  name text not null,
+  title varchar(255) not null,
   user_id uuid references users on delete cascade not null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
