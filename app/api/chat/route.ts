@@ -18,6 +18,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
 import { generateTitleFromUserMessage } from "./actions";
+import { systemPrompt } from "./prompt";
 
 const postRequestBodySchema = z.object({
   chatId: z.uuid(),
@@ -79,7 +80,7 @@ export const POST = async (req: NextRequest) => {
       execute: ({ writer: dataStream }) => {
         const result = streamText({
           model: anthropic.languageModel("claude-3-7-sonnet-20250219"),
-          system: "You are a helpful assistant.",
+          system: systemPrompt,
           messages: modelMessages,
           providerOptions: {
             anthropic: {
@@ -90,6 +91,9 @@ export const POST = async (req: NextRequest) => {
             } satisfies AnthropicProviderOptions,
           },
           experimental_transform: smoothStream({ chunking: "word" }),
+          onFinish: (result) => {
+            console.dir(result.totalUsage, { depth: null });
+          },
         });
 
         result.consumeStream();

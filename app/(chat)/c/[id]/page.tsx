@@ -23,7 +23,7 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
   return (
     <main className="flex flex-col items-center gap-8 p-4 pt-0 h-[calc(100dvh-3.5rem)] w-full overflow-hidden">
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={30} className="min-w-80">
+        <ResizablePanel defaultSize={30} className="min-w-80" maxSize={50}>
           <ChatView initialMessages={uiMessages} chatId={id} />
         </ResizablePanel>
         <ResizableHandle
