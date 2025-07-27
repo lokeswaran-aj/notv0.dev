@@ -9,10 +9,10 @@ An open-source alternative to v0.dev built with Next.js and Vercel's AI SDK. Cre
 - **AI-Powered Chat**: Interactive conversations with Claude 3.7 Sonnet with thinking capabilitiess
 - **Google OAuth Authentication**: Secure login with Google using Supabase Auth
 - **Responsive Design**: Beautiful, modern UI built with Tailwind CSS and Shadcn UI
+- **Database Integration**: Full Supabase database setup and management
 
 ### Planned Features
 
-- **Database Integration**: Full Supabase database setup and management
 - **Code Editor**: In-browser code editing with syntax highlighting
 - **File Explorer**: Project file management and navigation
 - **Terminal**: Integrated terminal for running commands
@@ -82,6 +82,12 @@ NODE_ENV=development
 4. Set your site URL and redirect URLs:
    - Site URL: `http://localhost:3000` (development)
    - Redirect URLs: `http://localhost:3000/auth/callback`
+5. Link the supabase project with cli and run the migrations
+
+```bash
+supabase link --project-ref <project-ref>
+supabase migration up
+```
 
 ### 5. Anthropic API Setup
 
