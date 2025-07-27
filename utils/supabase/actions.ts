@@ -35,16 +35,11 @@ const getMessagesByChatId = async (chatId: string) => {
 
 const createMessage = async (chatId: string, message: UIMessage) => {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("messages")
-    .insert({
-      chat_id: chatId,
-      parts: message.parts as Json,
-      role: message.role,
-      id: uuidv7(),
-    })
-    .select()
-    .single();
-  return data;
+  await supabase.from("messages").insert({
+    chat_id: chatId,
+    parts: message.parts as Json,
+    role: message.role,
+    id: uuidv7(),
+  });
 };
 export { createChat, createMessage, getChatById, getMessagesByChatId };

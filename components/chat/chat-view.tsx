@@ -53,7 +53,7 @@ export const ChatView = (props: ChatViewProps) => {
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
-    await sendMessage({
+    sendMessage({
       id: uuidv7(),
       role: "user",
       parts: [{ type: "text", text: input.trim() }],
@@ -79,7 +79,7 @@ export const ChatView = (props: ChatViewProps) => {
   return (
     <div className="relative flex h-full flex-col gap-4 border border-secondary rounded-lg py-4">
       <ChatContainerRoot className="flex-1">
-        <ChatContainerContent className="flex flex-col gap-8">
+        <ChatContainerContent className="flex flex-col">
           {messages.map((message, index) => {
             const isAssistant = message.role === "assistant";
             const isLastMessage = index === messages.length - 1;
