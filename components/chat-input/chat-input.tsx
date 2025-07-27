@@ -42,6 +42,8 @@ export const ChatInput = (props: Props) => {
         placeholder={placeholder}
         className="dark:bg-background"
         autoFocus={inputAutoFocus}
+        name="input"
+        id="input"
       />
       <PromptInputActions className="justify-end pt-2">
         <PromptInputAction
