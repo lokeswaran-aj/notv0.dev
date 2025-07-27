@@ -1,4 +1,3 @@
-"use client";
 import { ChatView } from "@/components/chat/chat-view";
 import { CodeView } from "@/components/chat/code-view";
 import {
@@ -6,13 +5,26 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { convertToUIMessages } from "@/lib/utils";
+import { getChatById, getMessagesByChatId } from "@/utils/supabase/actions";
+import { UIMessage } from "ai";
 
-const ChatPage = () => {
+const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
+  const { id } = await props.params;
+  const chat = await getChatById(id);
+
+  let uiMessages: UIMessage[] = [];
+
+  if (chat) {
+    const initialMessages = await getMessagesByChatId(id);
+    uiMessages = initialMessages ? convertToUIMessages(initialMessages) : [];
+  }
+
   return (
     <main className="flex flex-col items-center gap-8 p-4 pt-0 h-[calc(100dvh-3.5rem)] w-full overflow-hidden">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={30} className="min-w-80">
-          <ChatView />
+          <ChatView initialMessages={uiMessages} chatId={id} />
         </ResizablePanel>
         <ResizableHandle
           withHandle

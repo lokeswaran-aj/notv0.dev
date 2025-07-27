@@ -1,3 +1,4 @@
+import { convertToUIMessages } from "@/lib/utils";
 import {
   createChat,
   createMessage,
@@ -12,7 +13,6 @@ import {
   createUIMessageStreamResponse,
   smoothStream,
   streamText,
-  UIMessage,
 } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 import { v7 as uuidv7 } from "uuid";
@@ -71,6 +71,8 @@ export const POST = async (req: NextRequest) => {
 
   await createMessage(chatId, message);
   const messagesFromDb = await getMessagesByChatId(chatId);
+  const uiMessages = messagesFromDb ? convertToUIMessages(messagesFromDb) : [];
+  const modelMessages = convertToModelMessages(uiMessages);
 
   const response = createUIMessageStreamResponse({
     stream: createUIMessageStream({
@@ -78,9 +80,7 @@ export const POST = async (req: NextRequest) => {
         const result = streamText({
           model: anthropic.languageModel("claude-3-7-sonnet-20250219"),
           system: "You are a helpful assistant.",
-          messages: convertToModelMessages(
-            messagesFromDb as unknown as UIMessage[]
-          ),
+          messages: modelMessages,
           providerOptions: {
             anthropic: {
               thinking: {

@@ -28,7 +28,8 @@ const getMessagesByChatId = async (chatId: string) => {
   const { data } = await supabase
     .from("messages")
     .select("*")
-    .eq("chat_id", chatId);
+    .eq("chat_id", chatId)
+    .order("created_at", { ascending: true });
   return data;
 };
 

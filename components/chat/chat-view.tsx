@@ -13,15 +13,19 @@ import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
-import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { v7 as uuidv7 } from "uuid";
 
-export const ChatView = () => {
+type ChatViewProps = {
+  initialMessages: UIMessage[];
+  chatId: string;
+};
+
+export const ChatView = (props: ChatViewProps) => {
+  const { initialMessages, chatId } = props;
   const [input, setInput] = useState("");
   const { getStoredMessage, clearInitialMessage } = useInitialMessage();
-  const { id } = useParams();
   const didRun = useRef(false);
   const storedMessage = getStoredMessage();
 
@@ -38,7 +42,8 @@ export const ChatView = () => {
         };
       },
     }),
-    id: id as string,
+    messages: initialMessages,
+    id: chatId as string,
     onError: (error) => {
       console.error(error.message);
       const errorMessage = JSON.parse(error.message).message;
