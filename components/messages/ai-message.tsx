@@ -48,7 +48,12 @@ export const AiMessage = (props: Props) => {
           !isStreaming && "group-hover:opacity-100"
         )}
       >
-        <CopyMessageAction />
+        <CopyMessageAction
+          message={message.parts
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join("")}
+        />
       </MessageActions>
     </div>
   );

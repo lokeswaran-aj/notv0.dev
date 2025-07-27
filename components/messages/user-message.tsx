@@ -25,7 +25,7 @@ export const UserMessage = (props: Props) => {
                   "flex gap-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
                 )}
               >
-                <CopyMessageAction />
+                <CopyMessageAction message={part.text} />
               </MessageActions>
             </Fragment>
           );
