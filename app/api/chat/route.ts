@@ -75,48 +75,48 @@ export const POST = async (req: NextRequest) => {
   const uiMessages = messagesFromDb ? convertToUIMessages(messagesFromDb) : [];
   const modelMessages = convertToModelMessages(uiMessages);
 
-  const response = createUIMessageStreamResponse({
-    stream: createUIMessageStream({
-      execute: ({ writer: dataStream }) => {
-        const result = streamText({
-          model: anthropic.languageModel("claude-3-7-sonnet-20250219"),
-          system: systemPrompt,
-          messages: modelMessages,
-          providerOptions: {
-            anthropic: {
-              thinking: {
-                type: "enabled",
-                budgetTokens: 1024,
-              },
-            } satisfies AnthropicProviderOptions,
-          },
-          experimental_transform: smoothStream({ chunking: "word" }),
-          onFinish: (result) => {
-            console.dir(result.totalUsage, { depth: null });
-          },
-        });
+  const stream = createUIMessageStream({
+    execute: ({ writer: dataStream }) => {
+      const result = streamText({
+        model: anthropic.languageModel("claude-3-7-sonnet-20250219"),
+        system: systemPrompt,
+        messages: modelMessages,
+        providerOptions: {
+          anthropic: {
+            thinking: {
+              type: "enabled",
+              budgetTokens: 1024,
+            },
+          } satisfies AnthropicProviderOptions,
+        },
+        experimental_transform: smoothStream({ chunking: "word" }),
+        onFinish: (result) => {
+          console.dir(result.totalUsage, { depth: null });
+        },
+      });
 
-        result.consumeStream();
+      result.consumeStream();
 
-        dataStream.merge(
-          result.toUIMessageStream({
-            sendReasoning: true,
-          })
-        );
-      },
-      generateId: uuidv7,
-      onFinish: async ({ messages }) => {
-        await Promise.all(
-          messages.map(async (message) => {
-            await createMessage(chatId, message);
-          })
-        );
-      },
-      onError: (error) => {
-        console.error(error);
-        return "Oops, an error occurred!";
-      },
-    }),
+      dataStream.merge(
+        result.toUIMessageStream({
+          sendReasoning: true,
+        })
+      );
+    },
+    generateId: uuidv7,
+    onFinish: async ({ messages }) => {
+      await Promise.all(
+        messages.map(async (message) => {
+          await createMessage(chatId, message);
+        })
+      );
+    },
+    onError: (error) => {
+      console.error(error);
+      return "Oops, an error occurred!";
+    },
   });
-  return response;
+  return createUIMessageStreamResponse({
+    stream,
+  });
 };
