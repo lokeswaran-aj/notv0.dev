@@ -86,7 +86,7 @@ export const ChatView = (props: ChatViewProps) => {
             const isLoading =
               status === "submitted" &&
               messages.length > 0 &&
-              messages[messages.length - 1].role === "user" &&
+              messages.at(-1)?.role === "user" &&
               isLastMessage;
 
             return (
