@@ -12,13 +12,14 @@ import {
   createUIMessageStream,
   createUIMessageStreamResponse,
   smoothStream,
+  stepCountIs,
   streamText,
 } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
 import { generateTitleFromUserMessage } from "./actions";
-import { systemPrompt } from "./prompt";
+import { codeGenerator } from "./tools/code-generator";
 
 const postRequestBodySchema = z.object({
   chatId: z.uuid(),
@@ -76,10 +77,12 @@ export const POST = async (req: NextRequest) => {
   const modelMessages = convertToModelMessages(uiMessages);
 
   const stream = createUIMessageStream({
-    execute: ({ writer: dataStream }) => {
+    execute: async ({ writer: dataStream }) => {
       const result = streamText({
         model: anthropic.languageModel("claude-3-7-sonnet-20250219"),
-        system: systemPrompt,
+        system: `
+        You are Open V0, an open source version of V0.dev. You are an AI assistant that can help with code generation and other tasks. You have a CodeGenerator tool that can help you generate code. You can use the CodeGenerator tool to generate code for the project based on the user's message. Note: You should never generate code, the codeGenerator tool will generate the code and run it in a sandbox that the user can see. You just generate based on the summary returned from the codeGenerator tool. Note: Do not mention the codeGenerator tool in your response.
+        `,
         messages: modelMessages,
         providerOptions: {
           anthropic: {
@@ -89,10 +92,14 @@ export const POST = async (req: NextRequest) => {
             },
           } satisfies AnthropicProviderOptions,
         },
+        tools: {
+          codeGenerator: codeGenerator({ dataStream }),
+        },
         experimental_transform: smoothStream({ chunking: "word" }),
         onFinish: (result) => {
           console.dir(result.totalUsage, { depth: null });
         },
+        stopWhen: stepCountIs(5),
       });
 
       result.consumeStream();

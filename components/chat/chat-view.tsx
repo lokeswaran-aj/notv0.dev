@@ -11,8 +11,10 @@ import { Loader } from "@/components/ui/loader";
 import { Message } from "@/components/ui/message";
 import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
+import { useDataStream } from "@/stores/use-data-stream";
+import { CustomUIDataTypes } from "@/types/message";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, UIMessage } from "ai";
+import { DataUIPart, DefaultChatTransport, UIMessage } from "ai";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { v7 as uuidv7 } from "uuid";
@@ -26,6 +28,7 @@ export const ChatView = (props: ChatViewProps) => {
   const { initialMessages, chatId } = props;
   const [input, setInput] = useState("");
   const { getStoredMessage, clearInitialMessage } = useInitialMessage();
+  const { setDataStream, clearDataStream } = useDataStream();
   const didRun = useRef(false);
   const storedMessage = getStoredMessage();
 
@@ -44,6 +47,9 @@ export const ChatView = (props: ChatViewProps) => {
     }),
     messages: initialMessages,
     id: chatId as string,
+    onData: (dataPart) => {
+      if (dataPart) setDataStream(dataPart as DataUIPart<CustomUIDataTypes>);
+    },
     onError: (error) => {
       console.error(error.message);
       const errorMessage = JSON.parse(error.message).message;
@@ -58,6 +64,7 @@ export const ChatView = (props: ChatViewProps) => {
       role: "user",
       parts: [{ type: "text", text: input.trim() }],
     });
+    clearDataStream();
     setInput("");
   };
 
@@ -72,6 +79,7 @@ export const ChatView = (props: ChatViewProps) => {
         parts: [{ type: "text", text: storedMessage }],
       };
       sendMessage(initialMessage);
+      clearDataStream();
       clearInitialMessage();
     }
   }, [getStoredMessage, clearInitialMessage, sendMessage]);
