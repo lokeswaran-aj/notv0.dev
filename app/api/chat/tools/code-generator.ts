@@ -25,6 +25,7 @@ export const codeGenerator = ({
 
       const { object } = await generateObject({
         model: anthropic("claude-3-7-sonnet-20250219"),
+        maxOutputTokens: 20000,
         schema: z.object({
           filePath: z
             .string()
