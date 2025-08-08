@@ -12,7 +12,7 @@ export const CodePreviewTabs = () => {
   const { dataStream } = useDataStream();
 
   useEffect(() => {
-    if (dataStream.find((part) => part.type === "data-sandboxHost")) {
+    if (dataStream.sandboxHost?.host) {
       setActiveTab("preview");
     } else {
       setActiveTab("code");

@@ -5,8 +5,7 @@ import { useDataStream } from "@/stores/use-data-stream";
 export const AppPreview = () => {
   const { dataStream } = useDataStream();
 
-  const hostUrl = dataStream.find((part) => part.type === "data-sandboxHost")
-    ?.data.host;
+  const hostUrl = dataStream.sandboxHost?.host;
 
   return (
     <div className="relative flex h-full flex-col">

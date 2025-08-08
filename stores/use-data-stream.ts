@@ -3,19 +3,30 @@ import type { DataUIPart } from "ai";
 import { create } from "zustand";
 
 type DataStreamStore = {
-  dataStream: DataUIPart<CustomUIDataTypes>[];
-  setDataStream: (dataStream: DataUIPart<CustomUIDataTypes>) => void;
+  dataStream: Partial<CustomUIDataTypes>;
+  setDataStream: (dataPart: DataUIPart<CustomUIDataTypes>) => void;
   clearDataStream: () => void;
 };
 
 export const useDataStream = create<DataStreamStore>((set) => ({
-  dataStream: [],
-  setDataStream: (dataStream) => {
-    return set((state) => ({
-      dataStream: [...state.dataStream, dataStream],
-    }));
-  },
-  clearDataStream: () => {
-    return set({ dataStream: [] });
-  },
+  dataStream: {},
+  setDataStream: (dataPart) =>
+    set((state) => {
+      const typeKey = (
+        dataPart.type.startsWith("data-")
+          ? dataPart.type.slice(5)
+          : dataPart.type
+      ) as keyof CustomUIDataTypes;
+
+      const next: Partial<CustomUIDataTypes> = {
+        ...state.dataStream,
+        [typeKey]: {
+          ...(state.dataStream[typeKey] as object | undefined),
+          ...(dataPart.data as object),
+        } as any,
+      };
+
+      return { dataStream: next };
+    }),
+  clearDataStream: () => set({ dataStream: {} }),
 }));
