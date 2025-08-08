@@ -9,11 +9,11 @@ export const AppPreview = () => {
     ?.data.host;
 
   return (
-    <div className="relative flex h-full flex-col border border-secondary rounded-lg p-2">
+    <div className="relative flex h-full flex-col">
       {hostUrl ? (
         <iframe
           src={hostUrl}
-          className="h-full w-full rounded-lg border border-secondary"
+          className="h-full w-full border border-secondary"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           allow="clipboard-read; clipboard-write"
           referrerPolicy="no-referrer-when-downgrade"
