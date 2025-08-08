@@ -1,5 +1,5 @@
 import { ChatView } from "@/components/chat/chat-view";
-import { CodeView } from "@/components/chat/code-view";
+import { CodePreviewTabs } from "@/components/chat/code-preview-tabs";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -31,7 +31,7 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
           className="border rounded w-1 mx-1 opacity-0 bg-secondary hover:opacity-100"
         />
         <ResizablePanel defaultSize={70} className="min-w-sm">
-          <CodeView />
+          <CodePreviewTabs />
         </ResizablePanel>
       </ResizablePanelGroup>
     </main>

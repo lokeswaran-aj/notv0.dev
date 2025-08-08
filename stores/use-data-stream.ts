@@ -11,8 +11,8 @@ type DataStreamStore = {
 export const useDataStream = create<DataStreamStore>((set) => ({
   dataStream: [],
   setDataStream: (dataStream) => {
-    return set(() => ({
-      dataStream: [dataStream],
+    return set((state) => ({
+      dataStream: [...state.dataStream, dataStream],
     }));
   },
   clearDataStream: () => {
