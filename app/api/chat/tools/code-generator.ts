@@ -1,6 +1,6 @@
 import { getE2bSandbox } from "@/utils/e2b";
 import { anthropic } from "@ai-sdk/anthropic";
-import { generateObject, tool, UIMessage, UIMessageStreamWriter } from "ai";
+import { streamObject, tool, UIMessage, UIMessageStreamWriter } from "ai";
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
 
@@ -23,9 +23,11 @@ export const codeGenerator = ({
         transient: true,
       });
 
-      const { object, usage } = await generateObject({
+      const { partialObjectStream } = streamObject({
         model: anthropic("claude-sonnet-4-20250514"),
         maxOutputTokens: 20000,
+        schemaName: "code",
+        schemaDescription: "The code to be written to the file",
         schema: z.object({
           filePath: z
             .string()
@@ -35,42 +37,54 @@ export const codeGenerator = ({
             .describe(
               "The code to be written to the file. Do not wrap with backticks"
             ),
-          summary: z.string().describe("A summary of the code"),
         }),
         system: `
         You are a software engineer that can build moder Next.js web applications.
-        You will be given a prompt and you will need to generate the code to be written to the app/page.tsx file of a next.js project with Shadcn UI and Tailwind CSS setup that is running on a sandbox. You can import the Shadcn components from @/components/ui/ folder.
+        You will be given a prompt and you will need to generate the code to be written to the app/page.tsx file of a next.js project with Shadcn UI and Tailwind CSS setup that is running on a sandbox. You can import the Shadcn components from @/components/ui/ folder. You can use framer motion for animations.
         `,
         prompt,
-      });
-
-      console.log("🚀 ~ codeGenerator ~ usage:");
-      console.dir(usage, { depth: null });
-      const { filePath, code } = object;
-
-      dataStream.write({
-        type: "data-code",
-        data: {
-          filePath,
-          code,
+        onError: (error) => {
+          console.error(error);
         },
-        transient: true,
-      });
+        onFinish: async ({ object, usage }) => {
+          console.log("codeGenerator usage:");
+          console.dir(usage, { depth: null });
+          if (!object) {
+            console.error("No code was generated");
+            return;
+          }
+          const sandbox = await getE2bSandbox();
+          const { filePath, code } = object;
+          await sandbox.files.write(filePath, code);
 
-      const sandbox = await getE2bSandbox();
-      await sandbox.files.write(filePath, code);
-      const host = `https://${sandbox.getHost(3000)}`;
+          const host = `https://${sandbox.getHost(3000)}`;
 
-      dataStream.write({
-        type: "data-sandboxHost",
-        data: {
-          host,
+          dataStream.write({
+            type: "data-sandboxHost",
+            data: {
+              host,
+            },
+            transient: true,
+            id: "code",
+          });
         },
-        transient: true,
-        id: "code",
       });
+
+      for await (const element of partialObjectStream) {
+        dataStream.write({
+          type: "data-code",
+          id: "data-code",
+          data: {
+            filePath: element.filePath,
+            code: element.code,
+          },
+          transient: true,
+        });
+      }
+
       return {
-        summary: object.summary,
+        summary:
+          "The code was generated successfully and rendered to the user in a sandbox",
       };
     },
   });
