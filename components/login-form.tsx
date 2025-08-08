@@ -50,7 +50,9 @@ export function LoginForm({
           <Logo className="h-8 w-auto" />
           <h1 className="text-4xl font-bold">Welcome to Not V0</h1>
         </div>
-        <p className="text-muted-foreground">Sign in with Google to continue</p>
+        <p className="text-muted-foreground">
+          This is the last click before the fun part - Pinky promise!
+        </p>
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <Button
           onClick={handleSignInWithGoogle}
