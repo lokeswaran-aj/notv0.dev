@@ -11,7 +11,7 @@ export const codeGenerator = ({
 }) => {
   return tool({
     description:
-      "A Software Engineer that can build moder Next.js web applications",
+      "A Software Engineer that can build modern Next.js web applications",
     inputSchema: z.object({ prompt: z.string() }),
     execute: async ({ prompt }) => {
       const id = uuidv7();
@@ -23,8 +23,8 @@ export const codeGenerator = ({
         transient: true,
       });
 
-      const { object } = await generateObject({
-        model: anthropic("claude-3-7-sonnet-20250219"),
+      const { object, usage } = await generateObject({
+        model: anthropic("claude-sonnet-4-20250514"),
         maxOutputTokens: 20000,
         schema: z.object({
           filePath: z
@@ -44,6 +44,8 @@ export const codeGenerator = ({
         prompt,
       });
 
+      console.log("🚀 ~ codeGenerator ~ usage:");
+      console.dir(usage, { depth: null });
       const { filePath, code } = object;
 
       dataStream.write({

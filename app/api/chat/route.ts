@@ -79,9 +79,9 @@ export const POST = async (req: NextRequest) => {
   const stream = createUIMessageStream({
     execute: async ({ writer: dataStream }) => {
       const result = streamText({
-        model: anthropic.languageModel("claude-3-7-sonnet-20250219"),
+        model: anthropic.languageModel("claude-sonnet-4-20250514"),
         system: `
-        You are Open V0, an open source version of V0.dev. You are an AI assistant that can help with code generation and other tasks. You have a CodeGenerator tool that can help you generate code. You can use the CodeGenerator tool to generate code for the project based on the user's message. Note: You should never generate code, the codeGenerator tool will generate the code and run it in a sandbox that the user can see. You just generate based on the summary returned from the codeGenerator tool. Note: Do not mention the codeGenerator tool in your response.
+        You are Open V0, an open source version of V0.dev. You are an AI assistant that can help with code generation and other tasks. You have a CodeGenerator tool that can help you generate code. You can use the CodeGenerator tool to generate code for the project based on the user's message. Note: You should never generate code, the codeGenerator tool will generate the code and run it in a sandbox that the user can see. You just generate based on the summary returned from the codeGenerator tool. Note: Do not mention the word "codeGenerator" in your thinking or response.
         `,
         messages: modelMessages,
         providerOptions: {
@@ -97,6 +97,7 @@ export const POST = async (req: NextRequest) => {
         },
         experimental_transform: smoothStream({ chunking: "word" }),
         onFinish: (result) => {
+          console.log("🚀 ~ stream ~ chatUsage:");
           console.dir(result.totalUsage, { depth: null });
         },
         stopWhen: stepCountIs(5),
