@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDataStream } from "@/stores/use-data-stream";
 import { ChevronRight, File, Folder } from "lucide-react";
 import React, { useState } from "react";
+import { CodeBlock, CodeBlockCode } from "../ui/code-block";
 
 type CodeFile = {
   filePath: string;
@@ -119,11 +120,16 @@ export const FileTree = () => {
         </div>
         <div className="flex-1 overflow-hidden">
           {selectedFileData ? (
-            <ScrollArea className="h-full">
-              <pre className="p-4 text-sm font-mono whitespace-pre-wrap">
-                <code>{selectedFileData.code}</code>
-              </pre>
-            </ScrollArea>
+            <div className="h-full w-full bg-background">
+              <CodeBlock className="h-full w-full overflow-hidden border-0 rounded-none bg-background">
+                <CodeBlockCode
+                  theme="github-dark-default"
+                  code={selectedFileData.code}
+                  language="tsx"
+                  className="h-full w-full overflow-auto bg-background [&>pre]:whitespace-pre-wrap [&>pre]:break-words [&>pre]:h-full [&>pre]:w-full [&>pre]:p-4 [&>pre]:!bg-background [&>pre]:min-h-full [&_pre]:!bg-background [&_code]:!bg-background"
+                />
+              </CodeBlock>
+            </div>
           ) : (
             <div className="flex h-full items-center justify-center">
               <p className="text-sm text-muted-foreground">
