@@ -27,7 +27,7 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
         code.forEach((file) => {
           setDataStream({
             type: "data-code",
-            data: file as any,
+            data: file as unknown as { filePath: string; code: string }[],
           });
         });
       }
