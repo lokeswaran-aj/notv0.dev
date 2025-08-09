@@ -34,6 +34,9 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
           query: {
             metadata: { chatId: id },
             state: ["running"],
+          } as {
+            metadata?: Record<string, string>;
+            state?: Array<"running" | "paused">;
           },
         });
         if (Array.isArray(sandboxList) && sandboxList.length > 0) {
