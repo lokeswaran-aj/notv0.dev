@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDataStream } from "@/stores/use-data-stream";
-import { ChevronRight, File, Folder } from "lucide-react";
+import { Check, ChevronRight, Copy, File, Folder } from "lucide-react";
 import React, { useState } from "react";
 import { CodeBlock, CodeBlockCode } from "../ui/code-block";
 
@@ -60,6 +60,7 @@ function buildTreeFromFiles(files: CodeFile[]): TreeNode[] {
 export const FileTree = () => {
   const { dataStream } = useDataStream();
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   const files: CodeFile[] = React.useMemo(() => {
     return dataStream.code || [];
@@ -103,12 +104,33 @@ export const FileTree = () => {
 
       {/* Content Area */}
       <div className="flex-1 flex flex-col">
-        <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border px-4">
+        <div className="flex h-12 shrink-0 items-center justify-between border-b border-border px-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             {files.length > 0 && selectedFile ? (
               <p className="text-foreground text-sm">{selectedFile}</p>
             ) : null}
           </div>
+          {files.length > 0 && selectedFileData && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => {
+                navigator.clipboard.writeText(selectedFileData.code);
+                setIsCopied(true);
+                setTimeout(() => {
+                  setIsCopied(false);
+                }, 2000);
+              }}
+              title={isCopied ? "Copied!" : "Copy file content"}
+            >
+              {isCopied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </Button>
+          )}
         </div>
         <div className="flex-1 overflow-hidden">
           {files.length === 0 ? (
