@@ -9,4 +9,7 @@ export type CustomUIDataTypes = {
   id: {
     id: string;
   };
+  title: {
+    title: string;
+  };
 };

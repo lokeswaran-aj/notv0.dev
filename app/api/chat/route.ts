@@ -60,8 +60,9 @@ export const POST = async (req: NextRequest) => {
   }
 
   const chat = await getChatById(chatId);
+  let title = "";
   if (!chat) {
-    const title = await generateTitleFromUserMessage(message.parts[0].text);
+    title = await generateTitleFromUserMessage(message.parts[0].text);
     await createChat(chatId, user.id, title);
     await createArtifact(chatId);
   } else {
@@ -105,6 +106,12 @@ export const POST = async (req: NextRequest) => {
         stopWhen: stepCountIs(5),
       });
 
+      dataStream.write({
+        type: "data-title",
+        data: {
+          title: title || "New Chat",
+        },
+      });
       result.consumeStream();
 
       dataStream.merge(

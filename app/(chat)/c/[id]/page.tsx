@@ -84,6 +84,7 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
           <CodePreviewTabs
             sandBoxUrl={artifact?.sandbox_url}
             code={artifact?.code as { filePath: string; code: string }[]}
+            title={chat?.title}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

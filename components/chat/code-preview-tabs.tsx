@@ -10,15 +10,22 @@ import { useEffect, useState } from "react";
 type CodePreviewTabsProps = {
   sandBoxUrl?: string | null;
   code?: { filePath: string; code: string }[] | null;
+  title?: string | null;
 };
 
 export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
-  const { sandBoxUrl, code } = props;
+  const { sandBoxUrl, code, title } = props;
   const [activeTab, setActiveTab] = useState("code");
   const { dataStream, setDataStream } = useDataStream();
 
   useEffect(() => {
     const init = async () => {
+      if (title) {
+        setDataStream({
+          type: "data-title",
+          data: { title },
+        });
+      }
       if (sandBoxUrl && code) {
         setDataStream({
           type: "data-sandboxHost",
@@ -33,7 +40,7 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
       }
     };
     init();
-  }, [sandBoxUrl, code]);
+  }, [sandBoxUrl, code, title]);
 
   useEffect(() => {
     if (dataStream.sandboxHost?.host) {
@@ -50,14 +57,22 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
         onValueChange={setActiveTab}
         className="flex h-full w-full min-h-0 flex-col gap-0"
       >
-        <TabsList className="m-2 p-0 bg-background border border-secondary rounded-lg">
-          <TabsTrigger value="code">
-            <CodeXml className="w-3 h-3" />
-          </TabsTrigger>
-          <TabsTrigger value="preview">
-            <EyeIcon className="w-3 h-3" />
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex items-center gap-2 justify-between">
+          <TabsList className="m-2 p-0 bg-background border border-secondary rounded-lg">
+            <TabsTrigger value="code">
+              <CodeXml className="w-3 h-3" />
+            </TabsTrigger>
+            <TabsTrigger value="preview">
+              <EyeIcon className="w-3 h-3" />
+            </TabsTrigger>
+          </TabsList>
+          <div>
+            <h2 className="text-sm font-semibold text-primary">
+              {dataStream.title?.title || "New Chat"}
+            </h2>
+          </div>
+          <div />
+        </div>
         <TabsContent value="preview" className="flex-1 min-h-0 overflow-hidden">
           <AppPreview />
         </TabsContent>
