@@ -1,5 +1,6 @@
 import { convertToUIMessages } from "@/lib/utils";
 import {
+  createArtifact,
   createChat,
   createMessage,
   getChatById,
@@ -62,6 +63,7 @@ export const POST = async (req: NextRequest) => {
   if (!chat) {
     const title = await generateTitleFromUserMessage(message.parts[0].text);
     await createChat(chatId, user.id, title);
+    await createArtifact(chatId);
   } else {
     if (chat.user_id !== user.id) {
       return NextResponse.json(
@@ -93,7 +95,7 @@ export const POST = async (req: NextRequest) => {
           } satisfies AnthropicProviderOptions,
         },
         tools: {
-          codeGenerator: codeGenerator({ dataStream }),
+          codeGenerator: codeGenerator({ dataStream, chatId }),
         },
         experimental_transform: smoothStream({ chunking: "word" }),
         onFinish: (result) => {

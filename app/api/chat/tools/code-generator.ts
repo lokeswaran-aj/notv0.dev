@@ -1,4 +1,5 @@
 import { getE2bSandbox } from "@/utils/e2b";
+import { createClient } from "@/utils/supabase/server";
 import { anthropic } from "@ai-sdk/anthropic";
 import { streamObject, tool, UIMessage, UIMessageStreamWriter } from "ai";
 import { v7 as uuidv7 } from "uuid";
@@ -6,8 +7,10 @@ import { z } from "zod";
 
 export const codeGenerator = ({
   dataStream,
+  chatId,
 }: {
   dataStream: UIMessageStreamWriter<UIMessage>;
+  chatId: string;
 }) => {
   return tool({
     description:
@@ -53,11 +56,30 @@ export const codeGenerator = ({
             console.error("No code was generated");
             return;
           }
-          const sandbox = await getE2bSandbox();
           const { filePath, code } = object;
+          const supabase = await createClient();
+          const { data: artifacts } = await supabase
+            .from("artifacts")
+            .select()
+            .eq("chat_id", chatId)
+            .single();
+          const sandboxId = artifacts?.sandbox_id;
+          if (!sandboxId) {
+            console.error("No sandbox id found");
+            return;
+          }
+          const sandbox = await getE2bSandbox(sandboxId);
           await sandbox.files.write(filePath, code);
 
           const host = `https://${sandbox.getHost(3000)}`;
+
+          await supabase
+            .from("artifacts")
+            .update({
+              code: object,
+              sandbox_url: host,
+            })
+            .eq("chat_id", chatId);
 
           dataStream.write({
             type: "data-sandboxHost",
