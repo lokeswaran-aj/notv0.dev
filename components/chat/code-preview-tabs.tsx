@@ -7,9 +7,31 @@ import { useDataStream } from "@/stores/use-data-stream";
 import { CodeXml, EyeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export const CodePreviewTabs = () => {
+type CodePreviewTabsProps = {
+  sandBoxUrl?: string | null;
+  code?: { filePath: string; code: string } | null;
+};
+
+export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
+  const { sandBoxUrl, code } = props;
   const [activeTab, setActiveTab] = useState("code");
-  const { dataStream } = useDataStream();
+  const { dataStream, setDataStream } = useDataStream();
+
+  useEffect(() => {
+    const init = async () => {
+      if (sandBoxUrl && code) {
+        setDataStream({
+          type: "data-sandboxHost",
+          data: { host: sandBoxUrl },
+        });
+        setDataStream({
+          type: "data-code",
+          data: code,
+        });
+      }
+    };
+    init();
+  }, [sandBoxUrl, code]);
 
   useEffect(() => {
     if (dataStream.sandboxHost?.host) {

@@ -1,4 +1,4 @@
-import { getE2bSandbox } from "@/utils/e2b";
+import { getSandbox } from "@/utils/e2b";
 import { createClient } from "@/utils/supabase/server";
 import { anthropic } from "@ai-sdk/anthropic";
 import { streamObject, tool, UIMessage, UIMessageStreamWriter } from "ai";
@@ -68,7 +68,8 @@ export const codeGenerator = ({
             console.error("No sandbox id found");
             return;
           }
-          const sandbox = await getE2bSandbox(sandboxId);
+          const sandbox = await getSandbox(sandboxId);
+          sandbox.setTimeout(60_000 * 5);
           await sandbox.files.write(filePath, code);
 
           const host = `https://${sandbox.getHost(3000)}`;
@@ -87,7 +88,7 @@ export const codeGenerator = ({
               host,
             },
             transient: true,
-            id: "code",
+            id: "data-sandboxHost",
           });
         },
       });
