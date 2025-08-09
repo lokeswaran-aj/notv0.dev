@@ -26,11 +26,12 @@ export const codeGenerator = ({
         transient: true,
       });
 
-      const { partialObjectStream } = streamObject({
+      const { elementStream } = streamObject({
         model: anthropic("claude-sonnet-4-20250514"),
         maxOutputTokens: 20000,
         schemaName: "code",
         schemaDescription: "The code to be written to the file",
+        output: "array",
         schema: z.object({
           filePath: z
             .string()
@@ -41,10 +42,31 @@ export const codeGenerator = ({
               "The code to be written to the file. Do not wrap with backticks"
             ),
         }),
-        system: `
-        You are a software engineer that can build moder Next.js web applications.
-        You will be given a prompt and you will need to generate the code to be written to the app/page.tsx file of a next.js project with Shadcn UI and Tailwind CSS setup that is running on a sandbox. You can import the Shadcn components from @/components/ui/ folder. You can use framer motion for animations.
-        `,
+        system: `You are an expert full-stack engineer specializing in building modern Next.js applications with TypeScript, Tailwind CSS, and Shadcn UI. Your task is to generate high-quality, production-ready code for a Next.js 14 app running in a sandbox environment. The core page to be updated is app/page.tsx, but you may also create or modify additional files for proper code organization and maintainability.
+Project Setup & Constraints:
+Framework: Next.js (App Router, TypeScript)
+Styling: Tailwind CSS (utility-first, responsive, dark mode ready)
+UI Components: Shadcn UI (@/components/ui/…) — import only from this folder. Do not generate any shadcn components.
+Animations: Framer Motion (smooth, performant transitions and micro-interactions).
+Code Quality: Use clean, idiomatic React patterns; ensure accessibility (ARIA roles, semantic HTML).
+File Structure: Keep components modular; reusable UI in components/ folder, page logic in app/page.tsx or relevant route folders.
+Imports: Use absolute imports with @/ alias.
+What You Must Deliver:
+Working Implementation
+Fully functional UI based on the given user prompt.
+No placeholder text unless explicitly instructed.
+Use real, meaningful component structures instead of dumping all code into one file.
+Styling & Theming
+Follow Tailwind best practices; You make sure to use the correct tailwind classes.
+Use Shadcn UI variants & props for consistent design language.
+Ensure both light and dark themes look polished.
+Animation Guidelines
+Apply Framer Motion for page transitions, fade-ins, staggered lists, or hover effects as appropriate.
+Keep animations subtle and performant.
+Code Organization
+Break down into reusable components where logical.
+Maintain clear separation between UI and data logic.
+Name files and components descriptively.`,
         prompt,
         onError: (error) => {
           console.error(error);
@@ -56,44 +78,46 @@ export const codeGenerator = ({
             console.error("No code was generated");
             return;
           }
-          const { filePath, code } = object;
-          const supabase = await createClient();
-          const { data: artifacts } = await supabase
-            .from("artifacts")
-            .select()
-            .eq("chat_id", chatId)
-            .single();
-          const sandboxId = artifacts?.sandbox_id;
-          if (!sandboxId) {
-            console.error("No sandbox id found");
-            return;
+          for (const element of object) {
+            const { filePath, code } = element;
+            const supabase = await createClient();
+            const { data: artifacts } = await supabase
+              .from("artifacts")
+              .select()
+              .eq("chat_id", chatId)
+              .single();
+            const sandboxId = artifacts?.sandbox_id;
+            if (!sandboxId) {
+              console.error("No sandbox id found");
+              return;
+            }
+            const sandbox = await getSandbox(sandboxId);
+            sandbox.setTimeout(60_000 * 5);
+            await sandbox.files.write(filePath, code);
+
+            const host = `https://${sandbox.getHost(3000)}`;
+
+            await supabase
+              .from("artifacts")
+              .update({
+                code: object,
+                sandbox_url: host,
+              })
+              .eq("chat_id", chatId);
+
+            dataStream.write({
+              type: "data-sandboxHost",
+              data: {
+                host,
+              },
+              transient: true,
+              id: "data-sandboxHost",
+            });
           }
-          const sandbox = await getSandbox(sandboxId);
-          sandbox.setTimeout(60_000 * 5);
-          await sandbox.files.write(filePath, code);
-
-          const host = `https://${sandbox.getHost(3000)}`;
-
-          await supabase
-            .from("artifacts")
-            .update({
-              code: object,
-              sandbox_url: host,
-            })
-            .eq("chat_id", chatId);
-
-          dataStream.write({
-            type: "data-sandboxHost",
-            data: {
-              host,
-            },
-            transient: true,
-            id: "data-sandboxHost",
-          });
         },
       });
 
-      for await (const element of partialObjectStream) {
+      for await (const element of elementStream) {
         dataStream.write({
           type: "data-code",
           id: "data-code",

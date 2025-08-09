@@ -5,7 +5,7 @@ export type CustomUIDataTypes = {
   code: {
     filePath: string;
     code: string;
-  };
+  }[];
   id: {
     id: string;
   };

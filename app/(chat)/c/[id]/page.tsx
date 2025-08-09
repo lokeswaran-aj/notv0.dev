@@ -45,11 +45,13 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
           if (oldArtifact?.code) {
             const sandboxId = await createSandbox(id);
             const sandbox = await getSandbox(sandboxId);
-            const { filePath, code } = oldArtifact.code as {
+            for (const artifact of oldArtifact.code as {
               filePath: string;
               code: string;
-            };
-            await sandbox.files.write(filePath, code);
+            }[]) {
+              await sandbox.files.write(artifact.filePath, artifact.code);
+            }
+
             const host = `https://${sandbox.getHost(3000)}`;
             const supabase = await createClient();
             const { data } = await supabase
@@ -81,7 +83,7 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
         <ResizablePanel defaultSize={70} className="min-w-sm min-h-0">
           <CodePreviewTabs
             sandBoxUrl={artifact?.sandbox_url}
-            code={artifact?.code as { filePath: string; code: string }}
+            code={artifact?.code as { filePath: string; code: string }[]}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

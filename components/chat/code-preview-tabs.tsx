@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 type CodePreviewTabsProps = {
   sandBoxUrl?: string | null;
-  code?: { filePath: string; code: string } | null;
+  code?: { filePath: string; code: string }[] | null;
 };
 
 export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
@@ -24,9 +24,11 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
           type: "data-sandboxHost",
           data: { host: sandBoxUrl },
         });
-        setDataStream({
-          type: "data-code",
-          data: code,
+        code.forEach((file) => {
+          setDataStream({
+            type: "data-code",
+            data: file as any,
+          });
         });
       }
     };
