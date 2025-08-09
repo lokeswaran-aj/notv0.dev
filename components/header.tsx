@@ -1,5 +1,6 @@
 import { signOutAction } from "@/lib/actions/auth";
 import { createClient } from "@/utils/supabase/server";
+import { Github } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Logo } from "./ui/logo";
@@ -42,6 +43,14 @@ export const Header = async () => {
                 Login
               </Link>
             )}
+            <Button variant="outline" size="icon" asChild>
+              <Link
+                target="_blank"
+                href="https://github.com/lokeswaran-aj/notv0.dev"
+              >
+                <Github className="w-4 h-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

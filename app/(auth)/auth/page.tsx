@@ -6,19 +6,19 @@ export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   return (
-    <div className="flex flex-col gap-4 pt-4">
+    <div className="relative h-screen">
       <Link
         href="/"
-        className="flex items-center gap-2 text-base text-muted-foreground ml-10"
+        className="absolute top-4 left-4 z-10 flex items-center gap-2 text-sm md:text-base text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeftIcon className="h-4 w-4" />
         Back to home
       </Link>
-      <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-        <div className="w-full max-w-sm">
+      <main className="flex h-full flex-col items-center justify-center px-4 sm:px-6">
+        <div className="w-full max-w-md">
           <LoginForm />
         </div>
-      </div>
+      </main>
     </div>
   );
 }
