@@ -10,10 +10,48 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)"
+    PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
+      artifacts: {
+        Row: {
+          chat_id: string
+          code: Json | null
+          created_at: string
+          id: string
+          sandbox_id: string | null
+          sandbox_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          chat_id: string
+          code?: Json | null
+          created_at?: string
+          id: string
+          sandbox_id?: string | null
+          sandbox_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          chat_id?: string
+          code?: Json | null
+          created_at?: string
+          id?: string
+          sandbox_id?: string | null
+          sandbox_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artifacts_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chats: {
         Row: {
           created_at: string
