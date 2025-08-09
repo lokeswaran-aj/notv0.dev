@@ -117,6 +117,13 @@ Name files and components descriptively.`,
         },
       });
 
+      dataStream.write({
+        type: "data-codeGenerationStarted",
+        data: {
+          started: true,
+        },
+        transient: true,
+      });
       for await (const element of elementStream) {
         dataStream.write({
           type: "data-code",

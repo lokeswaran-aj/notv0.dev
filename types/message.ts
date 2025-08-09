@@ -12,4 +12,7 @@ export type CustomUIDataTypes = {
   title: {
     title: string;
   };
+  codeGenerationStarted: {
+    started: boolean;
+  };
 };

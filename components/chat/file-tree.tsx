@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useDataStream } from "@/stores/use-data-stream";
-import { Check, ChevronRight, Copy, File, Folder } from "lucide-react";
+import { Check, ChevronRight, Copy, File, Folder, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { CodeBlock, CodeBlockCode } from "../ui/code-block";
 
@@ -134,11 +134,20 @@ export const FileTree = () => {
         </div>
         <div className="flex-1 overflow-hidden">
           {files.length === 0 ? (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-sm text-muted-foreground">
-                No code has been generated yet
-              </p>
-            </div>
+            dataStream.codeGenerationStarted?.started ? (
+              <div className="flex h-full items-center justify-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <p className="text-sm text-muted-foreground">
+                  Generating code...
+                </p>
+              </div>
+            ) : (
+              <div className="flex h-full items-center justify-center">
+                <p className="text-sm text-muted-foreground">
+                  No code has been generated yet
+                </p>
+              </div>
+            )
           ) : selectedFileData ? (
             <div className="h-full w-full bg-background">
               <CodeBlock className="h-full w-full overflow-hidden border-0 rounded-none bg-background">
