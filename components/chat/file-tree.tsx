@@ -78,14 +78,6 @@ export const FileTree = () => {
     }
   }, [files, selectedFile]);
 
-  if (files.length === 0) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <p className="text-sm text-muted-foreground">No files available</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-full w-full">
       {/* File Sidebar */}
@@ -113,13 +105,19 @@ export const FileTree = () => {
       <div className="flex-1 flex flex-col">
         <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border px-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            {selectedFile && (
+            {files.length > 0 && selectedFile ? (
               <p className="text-foreground text-sm">{selectedFile}</p>
-            )}
+            ) : null}
           </div>
         </div>
         <div className="flex-1 overflow-hidden">
-          {selectedFileData ? (
+          {files.length === 0 ? (
+            <div className="flex h-full items-center justify-center">
+              <p className="text-sm text-muted-foreground">
+                No code has been generated yet
+              </p>
+            </div>
+          ) : selectedFileData ? (
             <div className="h-full w-full bg-background">
               <CodeBlock className="h-full w-full overflow-hidden border-0 rounded-none bg-background">
                 <CodeBlockCode
