@@ -36,7 +36,7 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
             state: ["running"],
           },
         });
-        if ((sandboxList as any).length > 0) {
+        if (Array.isArray(sandboxList) && sandboxList.length > 0) {
           artifact = oldArtifact;
         } else {
           if (oldArtifact?.code) {
