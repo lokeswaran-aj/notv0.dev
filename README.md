@@ -10,13 +10,14 @@ An open-source alternative to v0.dev built with Next.js and Vercel's AI SDK. Cre
 - **Google OAuth Authentication**: Secure login with Google using Supabase Auth
 - **Responsive Design**: Beautiful, modern UI built with Tailwind CSS and Shadcn UI
 - **Database Integration**: Full Supabase database setup and management
+- **Code Editor**: In-browser code editing with syntax highlighting
+- **File Explorer**: Project file management and navigation
+- **Preview**: Preview your application in real-time with E2B
 
 ### Planned Features
 
-- **Code Editor**: In-browser code editing with syntax highlighting
-- **File Explorer**: Project file management and navigation
+- **Multiple AI Models**: Support for multiple AI models
 - **Terminal**: Integrated terminal for running commands
-- **Preview**: Preview your application in real-time with E2B
 - **Version Control**: Git integration and project versioning
 - **Deployment**: One-click deployment to various platforms
 
