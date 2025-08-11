@@ -1,4 +1,3 @@
-import { SharedV2ProviderOptions } from "@/lib/models";
 import { getSandbox } from "@/utils/e2b";
 import { createClient } from "@/utils/supabase/server";
 import {
@@ -16,12 +15,10 @@ export const codeGenerator = ({
   dataStream,
   chatId,
   model,
-  providerOptions,
 }: {
   dataStream: UIMessageStreamWriter<UIMessage>;
   chatId: string;
   model: LanguageModel;
-  providerOptions: SharedV2ProviderOptions | undefined;
 }) => {
   return tool({
     description:
@@ -39,7 +36,6 @@ export const codeGenerator = ({
 
       const { elementStream } = streamObject({
         model,
-        providerOptions,
         maxOutputTokens: 20000,
         schemaName: "code",
         schemaDescription: "The code to be written to the file",

@@ -110,7 +110,6 @@ export const POST = async (req: NextRequest) => {
             dataStream,
             chatId,
             model,
-            providerOptions,
           }),
         },
         experimental_transform: smoothStream({ chunking: "word" }),
