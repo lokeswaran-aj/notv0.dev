@@ -4,7 +4,7 @@ import { JSONValue } from "ai";
 export type SharedV2ProviderOptions = Record<string, Record<string, JSONValue>>;
 
 export interface Model {
-  id: AnthropicModelId;
+  id: AnthropicModelId | OpenAIChatModelId;
   provider: string;
   model: string;
   providerOptions?: SharedV2ProviderOptions;
@@ -18,6 +18,8 @@ type AnthropicModelId =
   | "claude-3-sonnet-20240229"
   | "claude-3-haiku-20240307";
 
+type OpenAIChatModelId = "gpt-4.1" | "gpt-4.1-mini" | "gpt-4o" | "gpt-4o-mini";
+
 const anthropicProviderOptions = {
   anthropic: {
     thinking: {
@@ -25,6 +27,12 @@ const anthropicProviderOptions = {
       budgetTokens: 1024,
     },
   } satisfies AnthropicProviderOptions,
+};
+
+const openaiProviderOptions = {
+  openai: {
+    reasoningEffort: "low",
+  },
 };
 
 export const AI_MODELS: Model[] = [
@@ -44,20 +52,48 @@ export const AI_MODELS: Model[] = [
     id: "claude-3-5-sonnet-latest",
     provider: "Anthropic",
     model: "claude 3.5 Sonnet",
+    providerOptions: anthropicProviderOptions,
   },
   {
     id: "claude-3-5-haiku-latest",
     provider: "Anthropic",
     model: "claude 3.5 Haiku",
+    providerOptions: anthropicProviderOptions,
   },
   {
     id: "claude-3-sonnet-20240229",
     provider: "Anthropic",
     model: "claude 3 Sonnet",
+    providerOptions: anthropicProviderOptions,
   },
   {
     id: "claude-3-haiku-20240307",
     provider: "Anthropic",
     model: "claude 3 Haiku",
+    providerOptions: anthropicProviderOptions,
+  },
+  {
+    id: "gpt-4.1",
+    provider: "OpenAI",
+    model: "GPT 4.1",
+    providerOptions: openaiProviderOptions,
+  },
+  {
+    id: "gpt-4.1-mini",
+    provider: "OpenAI",
+    model: "GPT 4.1 Mini",
+    providerOptions: openaiProviderOptions,
+  },
+  {
+    id: "gpt-4o",
+    provider: "OpenAI",
+    model: "GPT 4o",
+    providerOptions: openaiProviderOptions,
+  },
+  {
+    id: "gpt-4o-mini",
+    provider: "OpenAI",
+    model: "GPT 4o Mini",
+    providerOptions: openaiProviderOptions,
   },
 ];

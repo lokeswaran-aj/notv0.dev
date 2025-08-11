@@ -1,5 +1,7 @@
 import { AI_MODELS, SharedV2ProviderOptions } from "@/lib/models";
 import { convertToUIMessages } from "@/lib/utils";
+import { openai } from "@ai-sdk/openai";
+
 import {
   createArtifact,
   createChat,
@@ -94,6 +96,10 @@ export const POST = async (req: NextRequest) => {
       model = anthropic.languageModel(modelId);
       providerOptions = selectedModel.providerOptions ?? undefined;
       break;
+    case "OpenAI":
+      model = openai(modelId);
+      providerOptions = selectedModel.providerOptions ?? undefined;
+      break;
     default:
       model = anthropic.languageModel("claude-3-5-sonnet-latest");
   }
@@ -103,6 +109,7 @@ export const POST = async (req: NextRequest) => {
       const result = streamText({
         model,
         providerOptions,
+        temperature: 1,
         system: generalSystemPrompt,
         messages: modelMessages,
         tools: {

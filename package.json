@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "2.0.0-beta.8",
+    "@ai-sdk/openai": "^2.0.9",
     "@ai-sdk/react": "2.0.0-beta.26",
     "@e2b/code-interpreter": "^1.5.1",
     "@hookform/resolvers": "^5.1.1",
