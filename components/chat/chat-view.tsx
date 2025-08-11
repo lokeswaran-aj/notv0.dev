@@ -12,6 +12,7 @@ import { Message } from "@/components/ui/message";
 import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
 import { useDataStream } from "@/stores/use-data-stream";
+import { useModel } from "@/stores/use-model";
 import { CustomUIDataTypes } from "@/types/message";
 import { useChat } from "@ai-sdk/react";
 import { DataUIPart, DefaultChatTransport, UIMessage } from "ai";
@@ -31,6 +32,7 @@ export const ChatView = (props: ChatViewProps) => {
   const { setDataStream, clearDataStream } = useDataStream();
   const didRun = useRef(false);
   const storedMessage = getStoredMessage();
+  const { model } = useModel();
 
   const { messages, status, stop, sendMessage } = useChat({
     transport: new DefaultChatTransport({
@@ -40,6 +42,7 @@ export const ChatView = (props: ChatViewProps) => {
           body: {
             chatId: id,
             message: messages.at(-1),
+            modelId: model,
             ...body,
           },
         };

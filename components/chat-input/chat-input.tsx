@@ -8,6 +8,7 @@ import {
   PromptInputTextarea,
 } from "@/components/ui/prompt-input";
 import { ArrowUp, Square } from "lucide-react";
+import { ModelSelector } from "./model-selector";
 
 type Props = {
   inputAutoFocus?: boolean;
@@ -45,7 +46,10 @@ export const ChatInput = (props: Props) => {
         name="input"
         id="input"
       />
-      <PromptInputActions className="justify-end pt-2">
+      <PromptInputActions className="flex items-center justify-between gap-2 pt-2">
+        <PromptInputAction tooltip="Select model">
+          <ModelSelector />
+        </PromptInputAction>
         <PromptInputAction
           tooltip={isStreaming ? "Stop generation" : "Send message"}
         >

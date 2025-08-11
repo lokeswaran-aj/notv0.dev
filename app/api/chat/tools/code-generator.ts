@@ -1,16 +1,27 @@
+import { SharedV2ProviderOptions } from "@/lib/models";
 import { getSandbox } from "@/utils/e2b";
 import { createClient } from "@/utils/supabase/server";
-import { anthropic } from "@ai-sdk/anthropic";
-import { streamObject, tool, UIMessage, UIMessageStreamWriter } from "ai";
+import {
+  LanguageModel,
+  streamObject,
+  tool,
+  UIMessage,
+  UIMessageStreamWriter,
+} from "ai";
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
+import { codeGenerationSystemPrompt } from "../prompt";
 
 export const codeGenerator = ({
   dataStream,
   chatId,
+  model,
+  providerOptions,
 }: {
   dataStream: UIMessageStreamWriter<UIMessage>;
   chatId: string;
+  model: LanguageModel;
+  providerOptions: SharedV2ProviderOptions | undefined;
 }) => {
   return tool({
     description:
@@ -27,7 +38,8 @@ export const codeGenerator = ({
       });
 
       const { elementStream } = streamObject({
-        model: anthropic("claude-sonnet-4-20250514"),
+        model,
+        providerOptions,
         maxOutputTokens: 20000,
         schemaName: "code",
         schemaDescription: "The code to be written to the file",
@@ -42,37 +54,18 @@ export const codeGenerator = ({
               "The code to be written to the file. Do not wrap with backticks"
             ),
         }),
-        system: `You are an expert full-stack engineer specializing in building modern Next.js applications with TypeScript, Tailwind CSS, and Shadcn UI. Your task is to generate high-quality, production-ready code for a Next.js 15 app running in a sandbox environment. The core page to be updated is app/page.tsx, but you may also create or modify additional files for proper code organization and maintainability.
-Project Setup & Constraints:
-Framework: Next.js (App Router, TypeScript)
-Styling: Tailwind CSS (utility-first, responsive)
-UI Components: Shadcn UI (@/components/ui/…) — import only from this folder. Do not generate any shadcn components.
-Animations: Framer Motion (smooth, performant transitions and micro-interactions).
-Code Quality: Use clean, idiomatic React patterns; ensure accessibility (ARIA roles, semantic HTML).
-File Structure: Keep components modular; reusable UI in components/ folder, page logic in app/page.tsx or relevant route folders.
-Imports: Use absolute imports with @/ alias.
-What You Must Deliver:
-Working Implementation
-Fully functional UI based on the given user prompt.
-No placeholder text unless explicitly instructed.
-Use real, meaningful component structures instead of dumping all code into one file.
-Styling & Theming:
-Follow Tailwind best practices; You make sure to use the correct tailwind classes.
-Use Shadcn UI variants & props for consistent design language from the @/components/ui/ folder.
-Animation Guidelines:
-Apply Framer Motion for page transitions, fade-ins, staggered lists, or hover effects as appropriate.
-Keep animations subtle and performant.
-Code Organization:
-Break down into reusable components where logical.
-Maintain clear separation between UI and data logic.
-Name files and components descriptively.`,
+        system: codeGenerationSystemPrompt,
         prompt,
         onError: (error) => {
           console.error(error);
         },
-        onFinish: async ({ object, usage }) => {
+        onFinish: async ({ object, usage, warnings, error }) => {
           console.log("codeGenerator usage:");
           console.dir(usage, { depth: null });
+          console.log("codeGenerator error:");
+          console.dir(error, { depth: null });
+          console.log("codeGenerator warnings:");
+          console.dir(warnings, { depth: null });
           if (!object) {
             console.error("No code was generated");
             return;
