@@ -30,7 +30,7 @@ export const ModelSelector = () => {
       required
       defaultValue={model}
     >
-      <SelectTrigger className="w-[180px] rounded-2xl focus-visible:ring-0 focus-visible:border-secondary dark:bg-background bg-background">
+      <SelectTrigger className="rounded-2xl focus-visible:ring-0 focus-visible:border-secondary dark:bg-background bg-background">
         <SelectValue placeholder="Select a model" />
       </SelectTrigger>
       <SelectContent
