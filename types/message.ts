@@ -2,10 +2,7 @@ export type CustomUIDataTypes = {
   sandboxHost: {
     host: string;
   };
-  code: {
-    filePath: string;
-    code: string;
-  }[];
+  code: Code[];
   id: {
     id: string;
   };
@@ -15,4 +12,9 @@ export type CustomUIDataTypes = {
   codeGenerationStarted: {
     started: boolean;
   };
+};
+
+export type Code = {
+  filePath: string;
+  code: string;
 };

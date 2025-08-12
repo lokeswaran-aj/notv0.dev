@@ -22,30 +22,13 @@ import {
 } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 import { v7 as uuidv7 } from "uuid";
-import { z } from "zod";
 import { generateTitleFromUserMessage } from "./actions";
 import { generalSystemPrompt } from "./prompt";
+import { postRequestBodySchema, postRequestBodyType } from "./schema";
 import { codeGenerator } from "./tools/code-generator";
 
-const postRequestBodySchema = z.object({
-  chatId: z.uuid(),
-  message: z.object({
-    id: z.uuid(),
-    role: z.enum(["user"]),
-    parts: z.array(
-      z.object({
-        type: z.enum(["text"]),
-        text: z.string().min(1).max(2000),
-      })
-    ),
-  }),
-  modelId: z.string(),
-  regenerate: z.boolean().optional(),
-  regenerateFromMessageId: z.string().optional(),
-});
-
 export const POST = async (req: NextRequest) => {
-  let requestBody: z.infer<typeof postRequestBodySchema>;
+  let requestBody: postRequestBodyType;
   try {
     const json = await req.json();
     requestBody = postRequestBodySchema.parse(json);
@@ -61,15 +44,16 @@ export const POST = async (req: NextRequest) => {
     requestBody;
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+
+  const [user, chat] = await Promise.all([
+    supabase.auth.getUser().then(({ data: { user } }) => user),
+    getChatById(chatId),
+  ]);
   if (!user) {
     return NextResponse.json({ message: "User not found" }, { status: 401 });
   }
 
-  const chat = await getChatById(chatId);
-  let title = "";
+  let title = "New Chat";
   if (!chat) {
     title = await generateTitleFromUserMessage(message.parts[0].text);
     await createChat(chatId, user.id, title);
@@ -141,7 +125,7 @@ export const POST = async (req: NextRequest) => {
         dataStream.write({
           type: "data-title",
           data: {
-            title: title || "New Chat",
+            title: title,
           },
         });
         result.consumeStream();

@@ -1,4 +1,5 @@
 import { Json } from "@/types/database.types";
+import { Code } from "@/types/message";
 import { UIMessage } from "ai";
 import { v7 as uuidv7 } from "uuid";
 import { createSandbox } from "../e2b";
@@ -67,8 +68,10 @@ const deleteMessagesAfter = async (chatId: string, messageId: string) => {
 };
 
 const createArtifact = async (chatId: string) => {
-  const supabase = await createClient();
-  const sandboxId = await createSandbox(chatId);
+  const [sandboxId, supabase] = await Promise.all([
+    createSandbox(chatId),
+    createClient(),
+  ]);
   await supabase.from("artifacts").insert({
     chat_id: chatId,
     id: uuidv7(),
@@ -86,6 +89,18 @@ const getArtifactByChatId = async (chatId: string) => {
   return data;
 };
 
+const updateArtifact = async (
+  chatId: string,
+  sandboxId: string,
+  code: Code[]
+) => {
+  const supabase = await createClient();
+  await supabase
+    .from("artifacts")
+    .update({ sandbox_id: sandboxId, code })
+    .eq("chat_id", chatId);
+};
+
 export {
   createArtifact,
   createChat,
@@ -94,4 +109,5 @@ export {
   getArtifactByChatId,
   getChatById,
   getMessagesByChatId,
+  updateArtifact,
 };

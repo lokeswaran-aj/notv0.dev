@@ -1,5 +1,5 @@
 import { getSandbox } from "@/utils/e2b";
-import { createClient } from "@/utils/supabase/server";
+import { getArtifactByChatId, updateArtifact } from "@/utils/supabase/actions";
 import {
   LanguageModel,
   streamObject,
@@ -70,36 +70,28 @@ export const codeGenerator = ({
             return;
           }
 
-          const supabase = await createClient();
-          const { data: artifacts } = await supabase
-            .from("artifacts")
-            .select()
-            .eq("chat_id", chatId)
-            .single();
+          const artifacts = await getArtifactByChatId(chatId);
 
           const sandboxId = artifacts?.sandbox_id;
           if (!sandboxId) {
             console.error("No sandbox id found");
             return;
           }
-          const sandbox = await getSandbox(sandboxId);
-          sandbox.setTimeout(60_000 * 10);
 
-          for (const element of object) {
-            const { filePath, code } = element;
-            await sandbox.files.write(filePath, code);
-          }
+          const sandbox = await getSandbox(sandboxId);
+
+          await Promise.all(
+            object.map(({ filePath, code }) => {
+              sandbox.files.write(filePath, code);
+            })
+          );
 
           const host = `https://${sandbox.getHost(3000)}`;
-          await fetch(host);
 
-          await supabase
-            .from("artifacts")
-            .update({
-              code: object,
-              sandbox_url: host,
-            })
-            .eq("chat_id", chatId);
+          await Promise.all([
+            fetch(host),
+            updateArtifact(chatId, sandboxId, object),
+          ]);
 
           dataStream.write({
             type: "data-sandboxHost",
