@@ -93,7 +93,7 @@ export const POST = async (req: NextRequest) => {
   let providerOptions: SharedV2ProviderOptions | undefined = undefined;
   switch (selectedModel.provider) {
     case "Anthropic":
-      model = anthropic.languageModel(modelId);
+      model = anthropic(modelId);
       providerOptions = selectedModel.providerOptions ?? undefined;
       break;
     case "OpenAI":
@@ -101,7 +101,7 @@ export const POST = async (req: NextRequest) => {
       providerOptions = selectedModel.providerOptions ?? undefined;
       break;
     default:
-      model = anthropic.languageModel("claude-3-5-sonnet-latest");
+      model = anthropic("claude-3-5-sonnet-latest");
   }
 
   const stream = createUIMessageStream({
