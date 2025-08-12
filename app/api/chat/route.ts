@@ -6,6 +6,7 @@ import {
   createArtifact,
   createChat,
   createMessage,
+  deleteMessagesAfter,
   getChatById,
   getMessagesByChatId,
 } from "@/utils/supabase/actions";
@@ -39,6 +40,8 @@ const postRequestBodySchema = z.object({
     ),
   }),
   modelId: z.string(),
+  regenerate: z.boolean().optional(),
+  regenerateFromMessageId: z.string().optional(),
 });
 
 export const POST = async (req: NextRequest) => {
@@ -54,7 +57,8 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  const { chatId, message, modelId } = requestBody;
+  const { chatId, message, modelId, regenerate, regenerateFromMessageId } =
+    requestBody;
 
   const supabase = await createClient();
   const {
@@ -71,6 +75,7 @@ export const POST = async (req: NextRequest) => {
     await createChat(chatId, user.id, title);
     await createArtifact(chatId);
   } else {
+    title = chat.title;
     if (chat.user_id !== user.id) {
       return NextResponse.json(
         { message: "You are not authorized to access this chat" },
@@ -79,7 +84,12 @@ export const POST = async (req: NextRequest) => {
     }
   }
 
-  await createMessage(chatId, message);
+  if (regenerate && regenerateFromMessageId) {
+    await deleteMessagesAfter(chatId, regenerateFromMessageId);
+  } else {
+    await createMessage(chatId, message);
+  }
+
   const messagesFromDb = await getMessagesByChatId(chatId);
   const uiMessages = messagesFromDb ? convertToUIMessages(messagesFromDb) : [];
   const modelMessages = convertToModelMessages(uiMessages);

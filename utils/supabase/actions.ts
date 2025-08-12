@@ -44,6 +44,27 @@ const createMessage = async (chatId: string, message: UIMessage) => {
   });
 };
 
+const deleteMessagesAfter = async (chatId: string, messageId: string) => {
+  const supabase = await createClient();
+
+  const { data: targetMessage } = await supabase
+    .from("messages")
+    .select("created_at")
+    .eq("chat_id", chatId)
+    .eq("id", messageId)
+    .single();
+
+  if (!targetMessage) {
+    throw new Error(`Target message ${messageId} not found`);
+  }
+
+  await supabase
+    .from("messages")
+    .delete()
+    .eq("chat_id", chatId)
+    .gt("created_at", targetMessage.created_at);
+};
+
 const createArtifact = async (chatId: string) => {
   const supabase = await createClient();
   const sandboxId = await createSandbox(chatId);
@@ -68,6 +89,7 @@ export {
   createArtifact,
   createChat,
   createMessage,
+  deleteMessagesAfter,
   getArtifactByChatId,
   getChatById,
   getMessagesByChatId,

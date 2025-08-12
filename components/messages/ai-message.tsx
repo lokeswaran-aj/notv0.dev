@@ -3,14 +3,16 @@ import { UIMessage } from "ai";
 import { MessageActions, MessageContent } from "../ui/message";
 import { Reasoning, ReasoningContent, ReasoningTrigger } from "../ui/reasoning";
 import { CopyMessageAction } from "./copy-message-action";
+import { RegenerateAction } from "./regenerate-action";
 
 type Props = {
   message: UIMessage;
   isStreaming: boolean;
+  regenerate: (messageId: string) => void;
 };
 
 export const AiMessage = (props: Props) => {
-  const { message, isStreaming } = props;
+  const { message, isStreaming, regenerate } = props;
 
   return (
     <div className="group flex w-full flex-col gap-0">
@@ -54,6 +56,7 @@ export const AiMessage = (props: Props) => {
             .map((part) => part.text)
             .join("")}
         />
+        <RegenerateAction onClick={() => regenerate(message.id)} />
       </MessageActions>
     </div>
   );
