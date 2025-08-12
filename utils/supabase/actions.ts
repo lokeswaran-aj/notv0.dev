@@ -40,7 +40,7 @@ const createMessage = async (chatId: string, message: UIMessage) => {
     chat_id: chatId,
     parts: message.parts as Json,
     role: message.role,
-    id: uuidv7(),
+    id: message.id ?? uuidv7(),
   });
 };
 
