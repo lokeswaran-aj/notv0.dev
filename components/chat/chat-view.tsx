@@ -55,8 +55,10 @@ export const ChatView = (props: ChatViewProps) => {
         if (dataPart) setDataStream(dataPart as DataUIPart<CustomUIDataTypes>);
       },
       onError: (error) => {
-        console.error(error.message);
-        const errorMessage = JSON.parse(error.message).message;
+        console.error(error);
+        const errorMessage = error.message
+          ? JSON.parse(error.message).message
+          : "Something went wrong";
         toast.error(errorMessage);
       },
     });

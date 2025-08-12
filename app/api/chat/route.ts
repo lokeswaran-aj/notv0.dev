@@ -99,72 +99,77 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ message: "Model not found" }, { status: 404 });
   }
 
-  let model = null;
-  let providerOptions: SharedV2ProviderOptions | undefined = undefined;
-  switch (selectedModel.provider) {
-    case "Anthropic":
-      model = anthropic(modelId);
-      providerOptions = selectedModel.providerOptions ?? undefined;
-      break;
-    case "OpenAI":
-      model = openai(modelId);
-      providerOptions = selectedModel.providerOptions ?? undefined;
-      break;
-    default:
-      model = anthropic("claude-3-5-sonnet-latest");
+  try {
+    let model = null;
+    let providerOptions: SharedV2ProviderOptions | undefined = undefined;
+    switch (selectedModel.provider) {
+      case "Anthropic":
+        model = anthropic(modelId);
+        providerOptions = selectedModel.providerOptions ?? undefined;
+        break;
+      case "OpenAI":
+        model = openai(modelId);
+        providerOptions = selectedModel.providerOptions ?? undefined;
+        break;
+      default:
+        model = anthropic("claude-3-5-sonnet-latest");
+    }
+
+    const stream = createUIMessageStream({
+      execute: async ({ writer: dataStream }) => {
+        const result = streamText({
+          model,
+          providerOptions,
+          temperature: 1,
+          system: generalSystemPrompt,
+          messages: modelMessages,
+          tools: {
+            codeGenerator: codeGenerator({
+              dataStream,
+              chatId,
+              model,
+            }),
+          },
+          experimental_transform: smoothStream({ chunking: "word" }),
+          onFinish: (result) => {
+            console.log("chatUsage:");
+            console.dir(result.totalUsage, { depth: null });
+          },
+          stopWhen: stepCountIs(5),
+        });
+
+        dataStream.write({
+          type: "data-title",
+          data: {
+            title: title || "New Chat",
+          },
+        });
+        result.consumeStream();
+
+        dataStream.merge(
+          result.toUIMessageStream({
+            sendReasoning: true,
+          })
+        );
+      },
+      generateId: uuidv7,
+      onFinish: async ({ messages }) => {
+        await Promise.all(
+          messages.map(async (message) => {
+            await createMessage(chatId, message);
+          })
+        );
+      },
+      onError: (error) => {
+        console.error(error);
+        return "Oops, an error occurred!";
+      },
+    });
+    return createUIMessageStreamResponse({
+      stream,
+    });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json("Internal server error", { status: 500 });
   }
-
-  const stream = createUIMessageStream({
-    execute: async ({ writer: dataStream }) => {
-      const result = streamText({
-        model,
-        providerOptions,
-        temperature: 1,
-        system: generalSystemPrompt,
-        messages: modelMessages,
-        tools: {
-          codeGenerator: codeGenerator({
-            dataStream,
-            chatId,
-            model,
-          }),
-        },
-        experimental_transform: smoothStream({ chunking: "word" }),
-        onFinish: (result) => {
-          console.log("chatUsage:");
-          console.dir(result.totalUsage, { depth: null });
-        },
-        stopWhen: stepCountIs(5),
-      });
-
-      dataStream.write({
-        type: "data-title",
-        data: {
-          title: title || "New Chat",
-        },
-      });
-      result.consumeStream();
-
-      dataStream.merge(
-        result.toUIMessageStream({
-          sendReasoning: true,
-        })
-      );
-    },
-    generateId: uuidv7,
-    onFinish: async ({ messages }) => {
-      await Promise.all(
-        messages.map(async (message) => {
-          await createMessage(chatId, message);
-        })
-      );
-    },
-    onError: (error) => {
-      console.error(error);
-      return "Oops, an error occurred!";
-    },
-  });
-  return createUIMessageStreamResponse({
-    stream,
-  });
 };

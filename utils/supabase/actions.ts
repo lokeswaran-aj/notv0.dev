@@ -55,7 +55,8 @@ const deleteMessagesAfter = async (chatId: string, messageId: string) => {
     .single();
 
   if (!targetMessage) {
-    throw new Error(`Target message ${messageId} not found`);
+    console.error(`Target message ${messageId} not found`);
+    throw new Error(`Invalid message ID`);
   }
 
   await supabase

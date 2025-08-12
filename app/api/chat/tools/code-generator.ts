@@ -52,9 +52,11 @@ export const codeGenerator = ({
         }),
         system: codeGenerationSystemPrompt,
         prompt,
+
         onError: (error) => {
           console.error(error);
         },
+
         onFinish: async ({ object, usage, warnings, error }) => {
           console.log("codeGenerator usage:");
           console.dir(usage, { depth: null });
@@ -62,46 +64,51 @@ export const codeGenerator = ({
           console.dir(error, { depth: null });
           console.log("codeGenerator warnings:");
           console.dir(warnings, { depth: null });
+
           if (!object) {
             console.error("No code was generated");
             return;
           }
+
+          const supabase = await createClient();
+          const { data: artifacts } = await supabase
+            .from("artifacts")
+            .select()
+            .eq("chat_id", chatId)
+            .single();
+
+          const sandboxId = artifacts?.sandbox_id;
+          if (!sandboxId) {
+            console.error("No sandbox id found");
+            return;
+          }
+          const sandbox = await getSandbox(sandboxId);
+          sandbox.setTimeout(60_000 * 10);
+
           for (const element of object) {
             const { filePath, code } = element;
-            const supabase = await createClient();
-            const { data: artifacts } = await supabase
-              .from("artifacts")
-              .select()
-              .eq("chat_id", chatId)
-              .single();
-            const sandboxId = artifacts?.sandbox_id;
-            if (!sandboxId) {
-              console.error("No sandbox id found");
-              return;
-            }
-            const sandbox = await getSandbox(sandboxId);
-            sandbox.setTimeout(60_000 * 5);
             await sandbox.files.write(filePath, code);
-
-            const host = `https://${sandbox.getHost(3000)}`;
-
-            await supabase
-              .from("artifacts")
-              .update({
-                code: object,
-                sandbox_url: host,
-              })
-              .eq("chat_id", chatId);
-
-            dataStream.write({
-              type: "data-sandboxHost",
-              data: {
-                host,
-              },
-              transient: true,
-              id: "data-sandboxHost",
-            });
           }
+
+          const host = `https://${sandbox.getHost(3000)}`;
+          await fetch(host);
+
+          await supabase
+            .from("artifacts")
+            .update({
+              code: object,
+              sandbox_url: host,
+            })
+            .eq("chat_id", chatId);
+
+          dataStream.write({
+            type: "data-sandboxHost",
+            data: {
+              host,
+            },
+            transient: true,
+            id: "data-sandboxHost",
+          });
         },
       });
 
