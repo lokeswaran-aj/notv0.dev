@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/resizable";
 import { convertToUIMessages } from "@/lib/utils";
 import { Tables } from "@/types/database.types";
+import { CodeData } from "@/types/message";
 import { createSandbox, getSandbox } from "@/utils/e2b";
 import {
   getArtifactByChatId,
@@ -45,11 +46,12 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
           if (oldArtifact?.code) {
             const sandboxId = await createSandbox(id);
             const sandbox = await getSandbox(sandboxId);
-            for (const artifact of oldArtifact.code as {
-              filePath: string;
-              code: string;
-            }[]) {
-              await sandbox.files.write(artifact.filePath, artifact.code);
+
+            const existingFiles = (oldArtifact.code as CodeData).files;
+            for (const file of existingFiles) {
+              if (file.filePath && file.code) {
+                await sandbox.files.write(file.filePath, file.code);
+              }
             }
 
             const host = `https://${sandbox.getHost(3000)}`;
@@ -83,7 +85,7 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
         <ResizablePanel defaultSize={70} className="min-w-sm min-h-0">
           <CodePreviewTabs
             sandBoxUrl={artifact?.sandbox_url}
-            code={artifact?.code as { filePath: string; code: string }[]}
+            code={artifact?.code}
             title={chat?.title}
           />
         </ResizablePanel>

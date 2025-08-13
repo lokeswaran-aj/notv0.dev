@@ -2,7 +2,9 @@ export type CustomUIDataTypes = {
   sandboxHost: {
     host: string;
   };
-  code: Code[];
+  code: {
+    files: Code[];
+  };
   id: {
     id: string;
   };
@@ -15,6 +17,17 @@ export type CustomUIDataTypes = {
 };
 
 export type Code = {
-  filePath: string;
-  code: string;
+  filePath?: string;
+  code?: string;
+};
+
+export type CodeData = {
+  files: Code[];
+};
+
+export type TreeNodeType = {
+  name: string;
+  type: "file" | "folder";
+  children?: TreeNodeType[];
+  filePath?: string;
 };

@@ -1,17 +1,20 @@
 "use client";
 
 import { AppPreview } from "@/components/chat/app-preview";
-import { CodeView } from "@/components/chat/code-view";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataStream } from "@/stores/use-data-stream";
+import { useFiles } from "@/stores/use-files";
+import { Json } from "@/types/database.types";
+import { CodeData } from "@/types/message";
 import { CodeXml, EyeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ArtifaceActions } from "./artifact-actions";
 import { ArtifactTitle } from "./artifact-header";
+import { CodeView } from "./code-view";
 
 type CodePreviewTabsProps = {
   sandBoxUrl?: string | null;
-  code?: { filePath: string; code: string }[] | null;
+  code?: Json | null;
   title?: string | null;
 };
 
@@ -19,30 +22,27 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
   const { sandBoxUrl, code, title } = props;
   const [activeTab, setActiveTab] = useState("code");
   const { dataStream, setDataStream } = useDataStream();
+  const { setFiles } = useFiles();
 
   useEffect(() => {
-    const init = async () => {
-      if (title) {
-        setDataStream({
-          type: "data-title",
-          data: { title },
-        });
-      }
-      if (sandBoxUrl && code) {
-        setDataStream({
-          type: "data-sandboxHost",
-          data: { host: sandBoxUrl },
-        });
-        code.forEach((file) => {
-          setDataStream({
-            type: "data-code",
-            data: file as unknown as { filePath: string; code: string }[],
-          });
-        });
-      }
-    };
-    init();
-  }, [sandBoxUrl, code, title]);
+    if (title) {
+      setDataStream({
+        type: "data-title",
+        data: { title },
+      });
+    }
+
+    if (code) {
+      setFiles((code as CodeData).files);
+    }
+
+    if (sandBoxUrl) {
+      setDataStream({
+        type: "data-sandboxHost",
+        data: { host: sandBoxUrl },
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (dataStream.sandboxHost?.host) {

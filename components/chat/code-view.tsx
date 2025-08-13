@@ -1,4 +1,4 @@
-import { FileTree } from "./file-tree";
+import { FileTree } from "./artifact/file-tree";
 
 export const CodeView = () => {
   return (

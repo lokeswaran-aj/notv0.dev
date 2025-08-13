@@ -12,8 +12,9 @@ import { Message } from "@/components/ui/message";
 import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
 import { useDataStream } from "@/stores/use-data-stream";
+import { useFiles } from "@/stores/use-files";
 import { useModel } from "@/stores/use-model";
-import { CustomUIDataTypes } from "@/types/message";
+import { CodeData, CustomUIDataTypes } from "@/types/message";
 import { useChat } from "@ai-sdk/react";
 import { DataUIPart, DefaultChatTransport, UIMessage } from "ai";
 import { useEffect, useRef, useState } from "react";
@@ -33,6 +34,7 @@ export const ChatView = (props: ChatViewProps) => {
   const didRun = useRef(false);
   const storedMessage = getStoredMessage();
   const { model } = useModel();
+  const { setFiles, clearFiles } = useFiles();
 
   const { messages, status, stop, sendMessage, regenerate, setMessages } =
     useChat({
@@ -52,7 +54,12 @@ export const ChatView = (props: ChatViewProps) => {
       messages: initialMessages,
       id: chatId as string,
       onData: (dataPart) => {
-        if (dataPart) setDataStream(dataPart as DataUIPart<CustomUIDataTypes>);
+        if (dataPart.type === "data-code") {
+          const files = (dataPart.data as CodeData).files;
+          setFiles(files);
+          return;
+        }
+        setDataStream(dataPart as DataUIPart<CustomUIDataTypes>);
       },
       onError: (error) => {
         console.error(error);
@@ -71,6 +78,7 @@ export const ChatView = (props: ChatViewProps) => {
       parts: [{ type: "text", text: input.trim() }],
     });
     clearDataStream();
+    clearFiles();
     setInput("");
   };
 
@@ -86,6 +94,7 @@ export const ChatView = (props: ChatViewProps) => {
       };
       sendMessage(initialMessage);
       clearDataStream();
+      clearFiles();
       clearInitialMessage();
     }
   }, [getStoredMessage, clearInitialMessage, sendMessage]);
@@ -97,6 +106,7 @@ export const ChatView = (props: ChatViewProps) => {
 
     setMessages(newMessages);
     clearDataStream();
+    clearFiles();
     regenerate({
       body: {
         chatId,
