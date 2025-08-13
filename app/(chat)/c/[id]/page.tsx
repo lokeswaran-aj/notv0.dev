@@ -17,6 +17,7 @@ import {
 import { createClient } from "@/utils/supabase/server";
 import { Sandbox } from "@e2b/code-interpreter";
 import { UIMessage } from "ai";
+import { toast } from "sonner";
 
 const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
   const { id } = await props.params;
@@ -45,7 +46,12 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
         } else {
           if (oldArtifact?.code) {
             const sandboxId = await createSandbox(id);
-            const sandbox = await getSandbox(sandboxId);
+            const sandbox = await getSandbox(id, sandboxId);
+            if (!sandbox) {
+              console.error("No sandbox found");
+              toast.error("No sandbox found");
+              return;
+            }
 
             const existingFiles = (oldArtifact.code as CodeData).files;
             for (const file of existingFiles) {

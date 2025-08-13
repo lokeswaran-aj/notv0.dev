@@ -69,7 +69,11 @@ export const codeGenerator = ({
             return;
           }
 
-          const sandbox = await getSandbox(sandboxId);
+          const sandbox = await getSandbox(chatId, sandboxId);
+          if (!sandbox) {
+            console.error("No sandbox found");
+            return;
+          }
 
           await Promise.all(
             object.files.map(({ filePath, code }) => {
