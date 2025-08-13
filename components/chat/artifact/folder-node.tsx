@@ -26,7 +26,7 @@ export const FolderNode = (props: Props) => {
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-start h-8 px-2 font-normal relative"
+            className="w-full justify-start h-8 px-2 font-normal relative hover:bg-secondary/30"
             style={{ paddingLeft: `${8 + level * 16}px` }}
           >
             <ChevronRight className="h-4 w-4 mr-1 transition-transform" />

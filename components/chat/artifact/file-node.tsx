@@ -33,8 +33,9 @@ export const FileNode = (props: Props) => {
         variant="ghost"
         size="sm"
         className={cn(
-          "w-full justify-start h-8 px-2 font-normal relative",
-          selectedFilePath === node.filePath && "bg-secondary text-foreground"
+          "w-full justify-start h-8 px-2 font-normal relative hover:bg-secondary/30",
+          selectedFilePath === node.filePath &&
+            "bg-secondary/50 text-foreground"
         )}
         onClick={() => node.filePath && handleFileSelect(node.filePath)}
         style={{ paddingLeft: `${8 + level * 20}px` }}
