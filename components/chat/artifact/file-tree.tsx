@@ -7,6 +7,7 @@ import { TreeNode } from "./tree-node";
 export const FileTree = () => {
   const { files } = useFiles();
   const [filePaths, setFilePaths] = useState<string[]>([]);
+  const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
 
   useEffect(() => {
     if (!files || files.length === 0) return;
@@ -14,6 +15,7 @@ export const FileTree = () => {
     files.forEach((file) => {
       if (file.filePath && file.code) {
         setFilePaths((prev) => [...prev, file.filePath ?? ""]);
+        setSelectedFilePath(file.filePath ?? "");
       }
     });
   }, [files]);
@@ -37,8 +39,8 @@ export const FileTree = () => {
                 <TreeNode
                   key={index}
                   node={node}
-                  selectedFile={null}
-                  onFileSelect={() => {}}
+                  selectedFile={selectedFilePath}
+                  onFileSelect={setSelectedFilePath}
                 />
               ))}
             </div>
