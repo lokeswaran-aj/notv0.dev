@@ -28,7 +28,7 @@ export const ModelSelector = () => {
       value={model}
       onValueChange={setModel}
       required
-      defaultValue={model}
+      defaultValue={AI_MODELS[0].id}
     >
       <SelectTrigger className="rounded-2xl focus-visible:ring-0 focus-visible:border-secondary dark:bg-background bg-background">
         <SelectValue placeholder="Select a model" />
