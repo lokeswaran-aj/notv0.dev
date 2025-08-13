@@ -11,12 +11,10 @@ import { VerticalLine } from "./vertical-line";
 
 type Props = {
   node: TreeNodeType;
-  selectedFile: string | null;
-  onFileSelect: (filePath: string) => void;
   level?: number;
 };
 export const FolderNode = (props: Props) => {
-  const { node, selectedFile, onFileSelect, level = 0 } = props;
+  const { node, level = 0 } = props;
 
   return (
     <VerticalLine level={level}>
@@ -38,13 +36,7 @@ export const FolderNode = (props: Props) => {
         <CollapsibleContent>
           <div>
             {node.children?.map((childNode, index) => (
-              <TreeNode
-                key={index}
-                node={childNode}
-                selectedFile={selectedFile}
-                onFileSelect={onFileSelect}
-                level={level + 1}
-              />
+              <TreeNode key={index} node={childNode} level={level + 1} />
             ))}
           </div>
         </CollapsibleContent>

@@ -22,7 +22,7 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
   const { sandBoxUrl, code, title } = props;
   const [activeTab, setActiveTab] = useState("code");
   const { dataStream, setDataStream } = useDataStream();
-  const { setFiles } = useFiles();
+  const setFiles = useFiles((state) => state.setFiles);
 
   useEffect(() => {
     if (title) {

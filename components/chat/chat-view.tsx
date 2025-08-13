@@ -31,10 +31,11 @@ export const ChatView = (props: ChatViewProps) => {
   const [input, setInput] = useState("");
   const { getStoredMessage, clearInitialMessage } = useInitialMessage();
   const { setDataStream, clearDataStream } = useDataStream();
+  const clearFiles = useFiles((state) => state.clearFiles);
   const didRun = useRef(false);
   const storedMessage = getStoredMessage();
   const { model } = useModel();
-  const { setFiles, clearFiles } = useFiles();
+  const setFiles = useFiles((state) => state.setFiles);
 
   const { messages, status, stop, sendMessage, regenerate, setMessages } =
     useChat({

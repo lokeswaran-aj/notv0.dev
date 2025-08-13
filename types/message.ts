@@ -2,9 +2,6 @@ export type CustomUIDataTypes = {
   sandboxHost: {
     host: string;
   };
-  code: {
-    files: Code[];
-  };
   id: {
     id: string;
   };
