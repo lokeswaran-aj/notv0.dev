@@ -13,9 +13,9 @@ export const FileTree = () => {
     [memoizedFiles]
   );
   return (
-    <div className="flex h-full w-full">
+    <div className="flex h-full w-full rounded-b-lg overflow-hidden">
       {treeData.length > 0 && (
-        <div className="w-full flex flex-col bg-background rounded-b-lg">
+        <div className="w-full flex flex-col bg-background">
           <ScrollArea className="flex-1">
             <div className="p-2 relative">
               {treeData.map((node, index) => (

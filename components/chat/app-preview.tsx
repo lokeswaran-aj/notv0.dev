@@ -8,11 +8,11 @@ export const AppPreview = () => {
   const hostUrl = dataStream.sandboxHost?.host;
 
   return (
-    <div className="relative flex h-full flex-col">
+    <div className="relative flex h-full flex-col border-0 border-t border-secondary rounded-b-lg overflow-hidden">
       {hostUrl ? (
         <iframe
           src={hostUrl}
-          className="h-full w-full border border-secondary"
+          className="h-full w-full"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           allow="clipboard-read; clipboard-write"
           referrerPolicy="no-referrer-when-downgrade"
