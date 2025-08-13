@@ -10,6 +10,7 @@ import {
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
 import { codeGenerationSystemPrompt } from "../prompt";
+import { codeGenerationOutputSchema } from "../schema";
 
 export const codeGenerator = ({
   dataStream,
@@ -34,22 +35,12 @@ export const codeGenerator = ({
         transient: true,
       });
 
-      const { elementStream } = streamObject({
+      const { partialObjectStream, object } = streamObject({
         model,
         maxOutputTokens: 20000,
         schemaName: "code",
         schemaDescription: "The code to be written to the file",
-        output: "array",
-        schema: z.object({
-          filePath: z
-            .string()
-            .describe("The relative path to the file to be created"),
-          code: z
-            .string()
-            .describe(
-              "The code to be written to the file. Do not wrap with backticks"
-            ),
-        }),
+        schema: codeGenerationOutputSchema,
         system: codeGenerationSystemPrompt,
         prompt,
 
@@ -81,7 +72,7 @@ export const codeGenerator = ({
           const sandbox = await getSandbox(sandboxId);
 
           await Promise.all(
-            object.map(({ filePath, code }) => {
+            object.files.map(({ filePath, code }) => {
               sandbox.files.write(filePath, code);
             })
           );
@@ -90,7 +81,7 @@ export const codeGenerator = ({
 
           await Promise.all([
             fetch(host),
-            updateArtifact(chatId, sandboxId, object),
+            updateArtifact(chatId, sandboxId, object, host),
           ]);
 
           dataStream.write({
@@ -111,21 +102,19 @@ export const codeGenerator = ({
         },
         transient: true,
       });
-      for await (const element of elementStream) {
+      for await (const partialObject of partialObjectStream) {
         dataStream.write({
           type: "data-code",
           id: "data-code",
           data: {
-            filePath: element.filePath,
-            code: element.code,
+            files: partialObject.files,
           },
           transient: true,
         });
       }
 
       return {
-        summary:
-          "The code was generated successfully and rendered to the user in a sandbox",
+        summary: (await object).summary,
       };
     },
   });
