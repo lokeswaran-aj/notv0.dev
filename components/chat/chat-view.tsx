@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/chat-container";
 import { Loader } from "@/components/ui/loader";
 import { Message } from "@/components/ui/message";
-import { useInitialMessage } from "@/hooks/use-initial-message";
 import { cn } from "@/lib/utils";
 import { useDataStream } from "@/stores/use-data-stream";
 import { useFiles } from "@/stores/use-files";
+import { useInitialMessage } from "@/stores/use-initial-message";
 import { useModel } from "@/stores/use-model";
 import { CodeData, CustomUIDataTypes } from "@/types/message";
 import { useChat } from "@ai-sdk/react";
@@ -29,11 +29,10 @@ type ChatViewProps = {
 export const ChatView = (props: ChatViewProps) => {
   const { initialMessages, chatId } = props;
   const [input, setInput] = useState("");
-  const { getStoredMessage, clearInitialMessage } = useInitialMessage();
+  const { initialMessage, clearInitialMessage } = useInitialMessage();
   const { setDataStream, clearDataStream } = useDataStream();
   const clearFiles = useFiles((state) => state.clearFiles);
   const didRun = useRef(false);
-  const storedMessage = getStoredMessage();
   const { model } = useModel();
   const setFiles = useFiles((state) => state.setFiles);
 
@@ -87,18 +86,18 @@ export const ChatView = (props: ChatViewProps) => {
     if (didRun.current) return;
     didRun.current = true;
 
-    if (storedMessage) {
-      const initialMessage: UIMessage = {
+    if (initialMessage) {
+      const storedMessage: UIMessage = {
         id: uuidv7(),
         role: "user",
-        parts: [{ type: "text", text: storedMessage }],
+        parts: [{ type: "text", text: initialMessage }],
       };
-      sendMessage(initialMessage);
+      sendMessage(storedMessage);
       clearDataStream();
       clearFiles();
       clearInitialMessage();
     }
-  }, [getStoredMessage, clearInitialMessage, sendMessage]);
+  }, [initialMessage, clearInitialMessage, sendMessage]);
 
   const handleRegenerate = (messageId: string) => {
     const index = messages.findIndex((message) => message.id === messageId);

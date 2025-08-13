@@ -1,6 +1,6 @@
 "use client";
 
-import { useInitialMessage } from "@/hooks/use-initial-message";
+import { useInitialMessage } from "@/stores/use-initial-message";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { v7 as uuidv7 } from "uuid";
