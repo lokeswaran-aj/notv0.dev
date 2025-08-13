@@ -30,9 +30,9 @@ export const FileTree = () => {
   );
 
   return (
-    <div className="flex h-full w-full border-t border-secondary">
+    <div className="flex h-full w-full">
       {treeData.length > 0 && (
-        <div className="w-64 flex flex-col border-r border-border bg-background">
+        <div className="w-full flex flex-col bg-background rounded-b-lg">
           <ScrollArea className="flex-1">
             <div className="p-2 relative">
               {treeData.map((node, index) => (
