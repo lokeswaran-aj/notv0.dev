@@ -3,17 +3,17 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { useFiles } from "@/stores/use-files";
+import { useArtifact } from "@/stores/use-artifact";
 import { useEffect } from "react";
 import { CodeEditor } from "./artifact/code-editor";
 import { FileTree } from "./artifact/file-tree";
 
 export const CodeView = () => {
-  const files = useFiles((state) => state.files);
-  const setFilePaths = useFiles((state) => state.setFilePaths);
-  const setSelectedFilePath = useFiles((state) => state.setSelectedFilePath);
-  const setCode = useFiles((state) => state.setCode);
-  const clearFiles = useFiles((state) => state.clearFiles);
+  const files = useArtifact((state) => state.files);
+  const setFilePaths = useArtifact((state) => state.setFilePaths);
+  const setSelectedFilePath = useArtifact((state) => state.setSelectedFilePath);
+  const setCode = useArtifact((state) => state.setCode);
+  const clearFiles = useArtifact((state) => state.clearFiles);
 
   useEffect(() => {
     if (!files || files.length === 0) {

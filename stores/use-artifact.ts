@@ -8,7 +8,7 @@ const INITIAL_STATE = {
   code: "",
 };
 
-export const useFiles = create<{
+export const useArtifact = create<{
   files: Code[];
   selectedFilePath: string | null;
   setSelectedFilePath: (filePath: string) => void;

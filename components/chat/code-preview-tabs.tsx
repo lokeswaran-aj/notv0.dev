@@ -2,8 +2,8 @@
 
 import { AppPreview } from "@/components/chat/app-preview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useArtifact } from "@/stores/use-artifact";
 import { useDataStream } from "@/stores/use-data-stream";
-import { useFiles } from "@/stores/use-files";
 import { useTitle } from "@/stores/use-title";
 import { CodeData } from "@/types/data/code";
 import { Json } from "@/types/database.types";
@@ -23,7 +23,7 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
   const { sandBoxUrl, code, title } = props;
   const [activeTab, setActiveTab] = useState("code");
   const { dataStream, setDataStream } = useDataStream();
-  const setFiles = useFiles((state) => state.setFiles);
+  const setFiles = useArtifact((state) => state.setFiles);
   const setTitle = useTitle((state) => state.setTitle);
 
   useEffect(() => {

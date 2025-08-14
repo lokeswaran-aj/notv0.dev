@@ -1,6 +1,6 @@
 import { CopyAction } from "@/components/user-actions/copy-action";
 import { ExternalLinkButton } from "@/components/user-actions/external-link";
-import { useFiles } from "@/stores/use-files";
+import { useArtifact } from "@/stores/use-artifact";
 
 type Props = {
   activeTab: string;
@@ -9,7 +9,7 @@ type Props = {
 
 export const ArtifactActions = (props: Props) => {
   const { activeTab, hostUrl } = props;
-  const code = useFiles((state) => state.code);
+  const code = useArtifact((state) => state.code);
   if (activeTab === "code") {
     return <CopyAction text={code} />;
   }

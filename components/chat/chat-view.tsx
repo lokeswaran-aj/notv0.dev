@@ -10,8 +10,8 @@ import {
 import { Loader } from "@/components/ui/loader";
 import { Message } from "@/components/ui/message";
 import { cn } from "@/lib/utils";
+import { useArtifact } from "@/stores/use-artifact";
 import { useDataStream } from "@/stores/use-data-stream";
-import { useFiles } from "@/stores/use-files";
 import { useInitialMessage } from "@/stores/use-initial-message";
 import { useModel } from "@/stores/use-model";
 import { useTitle } from "@/stores/use-title";
@@ -32,12 +32,12 @@ type ChatViewProps = {
 export const ChatView = (props: ChatViewProps) => {
   const { initialMessages, chatId } = props;
   const [input, setInput] = useState("");
+  const didRun = useRef(false);
   const { initialMessage, clearInitialMessage } = useInitialMessage();
   const { setDataStream, clearDataStream } = useDataStream();
-  const clearFiles = useFiles((state) => state.clearFiles);
-  const didRun = useRef(false);
+  const setFiles = useArtifact((state) => state.setFiles);
+  const clearFiles = useArtifact((state) => state.clearFiles);
   const { model } = useModel();
-  const setFiles = useFiles((state) => state.setFiles);
   const setTitle = useTitle((state) => state.setTitle);
   const resetTitle = useTitle((state) => state.resetTitle);
 

@@ -1,16 +1,16 @@
 import { CodeBlock, CodeBlockCode } from "@/components/ui/code-block";
+import { useArtifact } from "@/stores/use-artifact";
 import { useDataStream } from "@/stores/use-data-stream";
-import { useFiles } from "@/stores/use-files";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 
 export const CodeEditor = () => {
-  const code = useFiles((state) => state.code);
-  const selectedFilePath = useFiles((state) => state.selectedFilePath);
-  const memoizedCode = useMemo(() => code, [code]);
+  const code = useArtifact((state) => state.code);
+  const selectedFilePath = useArtifact((state) => state.selectedFilePath);
   const codeGenerationStarted = useDataStream(
     (state) => state.dataStream.codeGenerationStarted
   );
+  const memoizedCode = useMemo(() => code, [code]);
   const codeContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

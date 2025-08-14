@@ -1,11 +1,11 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useFiles } from "@/stores/use-files";
+import { useArtifact } from "@/stores/use-artifact";
 import { buildTreeFromFiles } from "@/utils/files-tree-builder";
 import { useMemo } from "react";
 import { TreeNode } from "./tree-node";
 
 export const FileTree = () => {
-  const filePaths = useFiles((state) => state.filePaths);
+  const filePaths = useArtifact((state) => state.filePaths);
   const memoizedFiles = useMemo(() => filePaths, [filePaths]);
 
   const treeData = useMemo(

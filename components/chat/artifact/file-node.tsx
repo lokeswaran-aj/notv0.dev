@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { File } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useFiles } from "@/stores/use-files";
+import { useArtifact } from "@/stores/use-artifact";
 import { TreeNodeType } from "@/types/data/code";
 import { VerticalLine } from "./vertical-line";
 
@@ -14,10 +14,10 @@ type Props = {
 export const FileNode = (props: Props) => {
   const { node, level = 0 } = props;
 
-  const selectedFilePath = useFiles((state) => state.selectedFilePath);
-  const setSelectedFilePath = useFiles((state) => state.setSelectedFilePath);
-  const files = useFiles((state) => state.files);
-  const setCode = useFiles((state) => state.setCode);
+  const selectedFilePath = useArtifact((state) => state.selectedFilePath);
+  const setSelectedFilePath = useArtifact((state) => state.setSelectedFilePath);
+  const files = useArtifact((state) => state.files);
+  const setCode = useArtifact((state) => state.setCode);
 
   const handleFileSelect = (filePath: string) => {
     setSelectedFilePath(filePath);
