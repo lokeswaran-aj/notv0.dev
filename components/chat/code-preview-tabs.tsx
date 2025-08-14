@@ -3,7 +3,6 @@
 import { AppPreview } from "@/components/chat/app-preview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useArtifact } from "@/stores/use-artifact";
-import { useDataStream } from "@/stores/use-data-stream";
 import { useTitle } from "@/stores/use-title";
 import { CodeData } from "@/types/data/code";
 import { Json } from "@/types/database.types";
@@ -22,34 +21,20 @@ type CodePreviewTabsProps = {
 export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
   const { sandBoxUrl, code, title } = props;
   const [activeTab, setActiveTab] = useState("code");
-  const { dataStream, setDataStream } = useDataStream();
   const setFiles = useArtifact((state) => state.setFiles);
+  const setSandBoxUrl = useArtifact((state) => state.setSandBoxUrl);
+  const hostUrl = useArtifact((state) => state.sandBoxUrl);
   const setTitle = useTitle((state) => state.setTitle);
 
   useEffect(() => {
-    if (title) {
-      setTitle(title);
-    }
-
-    if (code) {
-      setFiles((code as CodeData).files);
-    }
-
-    if (sandBoxUrl) {
-      setDataStream({
-        type: "data-sandboxHost",
-        data: { host: sandBoxUrl },
-      });
-    }
+    title && setTitle(title);
+    code && setFiles((code as CodeData).files);
+    sandBoxUrl && setSandBoxUrl(sandBoxUrl);
   }, []);
 
   useEffect(() => {
-    if (dataStream.sandboxHost?.host) {
-      setActiveTab("preview");
-    } else {
-      setActiveTab("code");
-    }
-  }, [dataStream]);
+    hostUrl ? setActiveTab("preview") : setActiveTab("code");
+  }, [hostUrl]);
 
   return (
     <div className="relative flex h-full min-h-0 flex-col border border-secondary rounded-lg">
@@ -68,10 +53,7 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
             </TabsTrigger>
           </TabsList>
           <ArtifactTitle />
-          <ArtifactActions
-            activeTab={activeTab}
-            hostUrl={dataStream.sandboxHost?.host}
-          />
+          <ArtifactActions activeTab={activeTab} hostUrl={hostUrl} />
         </div>
         <TabsContent value="preview" className="flex-1 min-h-0 overflow-hidden">
           <AppPreview />

@@ -4,7 +4,7 @@ import { useArtifact } from "@/stores/use-artifact";
 
 type Props = {
   activeTab: string;
-  hostUrl?: string;
+  hostUrl: string | null;
 };
 
 export const ArtifactActions = (props: Props) => {

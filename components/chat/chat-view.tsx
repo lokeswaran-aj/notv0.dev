@@ -16,6 +16,7 @@ import { useInitialMessage } from "@/stores/use-initial-message";
 import { useModel } from "@/stores/use-model";
 import { useTitle } from "@/stores/use-title";
 import { CodeData } from "@/types/data/code";
+import { SandBoxUrlData } from "@/types/data/sandbox-url";
 import { TitleData } from "@/types/data/title";
 import { CustomUIDataTypes } from "@/types/message";
 import { useChat } from "@ai-sdk/react";
@@ -37,6 +38,7 @@ export const ChatView = (props: ChatViewProps) => {
   const { setDataStream, clearDataStream } = useDataStream();
   const setFiles = useArtifact((state) => state.setFiles);
   const clearFiles = useArtifact((state) => state.clearFiles);
+  const setSandBoxUrl = useArtifact((state) => state.setSandBoxUrl);
   const { model } = useModel();
   const setTitle = useTitle((state) => state.setTitle);
   const resetTitle = useTitle((state) => state.resetTitle);
@@ -60,15 +62,14 @@ export const ChatView = (props: ChatViewProps) => {
       id: chatId as string,
       onData: (dataPart) => {
         if (dataPart.type === "data-code") {
-          const files = (dataPart.data as CodeData).files;
-          setFiles(files);
-          return;
+          setFiles((dataPart.data as CodeData).files);
         } else if (dataPart.type === "data-title") {
-          const title = (dataPart.data as TitleData).title;
-          setTitle(title);
-          return;
+          setTitle((dataPart.data as TitleData).title);
+        } else if (dataPart.type === "data-sandboxHost") {
+          setSandBoxUrl((dataPart.data as SandBoxUrlData).host);
+        } else {
+          setDataStream(dataPart as DataUIPart<CustomUIDataTypes>);
         }
-        setDataStream(dataPart as DataUIPart<CustomUIDataTypes>);
       },
       onError: (error) => {
         console.error(error);

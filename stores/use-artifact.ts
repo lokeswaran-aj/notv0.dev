@@ -6,6 +6,7 @@ const INITIAL_STATE = {
   selectedFilePath: null,
   filePaths: [],
   code: "",
+  sandBoxUrl: null,
 };
 
 export const useArtifact = create<{
@@ -18,13 +19,15 @@ export const useArtifact = create<{
   setFilePaths: (filePath: string | null) => void;
   code: string;
   setCode: (code: string) => void;
+  sandBoxUrl: string | null;
+  setSandBoxUrl: (url: string) => void;
 }>((set) => ({
   ...INITIAL_STATE,
   clearFiles: () => set(INITIAL_STATE),
 
-  setFiles: (newFiles) => set({ files: newFiles }),
+  setFiles: (files) => set({ files }),
 
-  setSelectedFilePath: (filePath) => set({ selectedFilePath: filePath }),
+  setSelectedFilePath: (selectedFilePath) => set({ selectedFilePath }),
 
   setFilePaths: (filePath) => {
     if (filePath) {
@@ -35,4 +38,6 @@ export const useArtifact = create<{
   },
 
   setCode: (code) => set({ code }),
+
+  setSandBoxUrl: (sandBoxUrl) => set({ sandBoxUrl }),
 }));

@@ -1,11 +1,9 @@
 "use client";
 
-import { useDataStream } from "@/stores/use-data-stream";
+import { useArtifact } from "@/stores/use-artifact";
 
 export const AppPreview = () => {
-  const { dataStream } = useDataStream();
-
-  const hostUrl = dataStream.sandboxHost?.host;
+  const hostUrl = useArtifact((state) => state.sandBoxUrl);
 
   return (
     <div className="relative flex h-full flex-col border-0 border-t border-secondary rounded-b-lg overflow-hidden">
