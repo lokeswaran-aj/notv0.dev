@@ -14,7 +14,9 @@ import { useDataStream } from "@/stores/use-data-stream";
 import { useFiles } from "@/stores/use-files";
 import { useInitialMessage } from "@/stores/use-initial-message";
 import { useModel } from "@/stores/use-model";
+import { useTitle } from "@/stores/use-title";
 import { CodeData } from "@/types/data/code";
+import { TitleData } from "@/types/data/title";
 import { CustomUIDataTypes } from "@/types/message";
 import { useChat } from "@ai-sdk/react";
 import { DataUIPart, DefaultChatTransport, UIMessage } from "ai";
@@ -36,6 +38,8 @@ export const ChatView = (props: ChatViewProps) => {
   const didRun = useRef(false);
   const { model } = useModel();
   const setFiles = useFiles((state) => state.setFiles);
+  const setTitle = useTitle((state) => state.setTitle);
+  const resetTitle = useTitle((state) => state.resetTitle);
 
   const { messages, status, stop, sendMessage, regenerate, setMessages } =
     useChat({
@@ -58,6 +62,10 @@ export const ChatView = (props: ChatViewProps) => {
         if (dataPart.type === "data-code") {
           const files = (dataPart.data as CodeData).files;
           setFiles(files);
+          return;
+        } else if (dataPart.type === "data-title") {
+          const title = (dataPart.data as TitleData).title;
+          setTitle(title);
           return;
         }
         setDataStream(dataPart as DataUIPart<CustomUIDataTypes>);
@@ -97,8 +105,9 @@ export const ChatView = (props: ChatViewProps) => {
       clearDataStream();
       clearFiles();
       clearInitialMessage();
+      resetTitle();
     }
-  }, [initialMessage, clearInitialMessage, sendMessage]);
+  }, [initialMessage, clearInitialMessage, sendMessage, resetTitle]);
 
   const handleRegenerate = (messageId: string) => {
     const index = messages.findIndex((message) => message.id === messageId);

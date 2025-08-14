@@ -5,9 +5,6 @@ export type CustomUIDataTypes = {
   id: {
     id: string;
   };
-  title: {
-    title: string;
-  };
   codeGenerationStarted: {
     started: boolean;
   };

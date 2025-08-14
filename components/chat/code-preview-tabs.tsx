@@ -4,12 +4,13 @@ import { AppPreview } from "@/components/chat/app-preview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDataStream } from "@/stores/use-data-stream";
 import { useFiles } from "@/stores/use-files";
+import { useTitle } from "@/stores/use-title";
 import { CodeData } from "@/types/data/code";
 import { Json } from "@/types/database.types";
 import { CodeXml, EyeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ArtifaceActions } from "./artifact-actions";
-import { ArtifactTitle } from "./artifact-header";
+import { ArtifactActions } from "./artifact/artifact-actions";
+import { ArtifactTitle } from "./artifact/artifact-header";
 import { CodeView } from "./code-view";
 
 type CodePreviewTabsProps = {
@@ -23,13 +24,11 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
   const [activeTab, setActiveTab] = useState("code");
   const { dataStream, setDataStream } = useDataStream();
   const setFiles = useFiles((state) => state.setFiles);
+  const setTitle = useTitle((state) => state.setTitle);
 
   useEffect(() => {
     if (title) {
-      setDataStream({
-        type: "data-title",
-        data: { title },
-      });
+      setTitle(title);
     }
 
     if (code) {
@@ -59,8 +58,8 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
         onValueChange={setActiveTab}
         className="flex h-full w-full min-h-0 flex-col gap-0"
       >
-        <div className="flex items-center gap-2 justify-between">
-          <TabsList className="m-2 p-0 bg-background border border-secondary rounded-lg">
+        <div className="flex items-center gap-2 p-2 justify-between">
+          <TabsList className="p-0 bg-background border border-secondary rounded-lg">
             <TabsTrigger value="code">
               <CodeXml className="w-3 h-3" />
             </TabsTrigger>
@@ -69,7 +68,7 @@ export const CodePreviewTabs = (props: CodePreviewTabsProps) => {
             </TabsTrigger>
           </TabsList>
           <ArtifactTitle />
-          <ArtifaceActions
+          <ArtifactActions
             activeTab={activeTab}
             hostUrl={dataStream.sandboxHost?.host}
           />
