@@ -1,5 +1,5 @@
 import constants from "@/lib/constants";
-import { Sandbox, SandboxError } from "@e2b/code-interpreter";
+import { Sandbox } from "@e2b/code-interpreter";
 
 export const createSandbox = async (chatId: string) => {
   const sbx = await Sandbox.create("open-v0-nextjs", {
@@ -9,18 +9,29 @@ export const createSandbox = async (chatId: string) => {
   return sbx.sandboxId;
 };
 
-export const getSandbox = async (chatId: string, sandboxId: string) => {
-  try {
-    const sbx = await Sandbox.connect(sandboxId);
-    sbx.setTimeout(constants.SANDBOX_TIMEOUT);
-    return sbx;
-  } catch (error) {
-    if (error instanceof SandboxError) {
-      const sandboxId = await createSandbox(chatId);
-      return await Sandbox.connect(sandboxId);
-    } else {
-      console.error("Error connecting to sandbox", error);
-      throw error;
-    }
+export const manageSandbox = async (chatId: string, sandboxId: string) => {
+  const sandboxList = await Sandbox.list({
+    query: {
+      metadata: { chatId },
+      state: ["running"],
+    } as {
+      metadata?: Record<string, string>;
+      state?: Array<"running" | "paused">;
+    },
+  });
+
+  const oldSandboxId = sandboxList.find(
+    (sbx) => sbx.sandboxId === sandboxId
+  )?.sandboxId;
+  if (oldSandboxId) {
+    const oldSandbox = await Sandbox.connect(oldSandboxId);
+    oldSandbox.setTimeout(constants.SANDBOX_TIMEOUT);
+    return oldSandbox;
   }
+
+  const newSandboxId = await createSandbox(chatId);
+  const sandbox = await Sandbox.connect(newSandboxId);
+  sandbox.setTimeout(constants.SANDBOX_TIMEOUT);
+
+  return sandbox;
 };

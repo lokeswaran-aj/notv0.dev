@@ -1,4 +1,4 @@
-import { getSandbox } from "@/utils/e2b";
+import { manageSandbox } from "@/utils/e2b";
 import { getArtifactByChatId, updateArtifact } from "@/utils/supabase/actions";
 import {
   LanguageModel,
@@ -69,12 +69,7 @@ export const codeGenerator = ({
             return;
           }
 
-          const sandbox = await getSandbox(chatId, sandboxId);
-          if (!sandbox) {
-            console.error("No sandbox found");
-            return;
-          }
-
+          const sandbox = await manageSandbox(chatId, sandboxId);
           await Promise.all(
             object.files.map(({ filePath, code }) => {
               sandbox.files.write(filePath, code);
@@ -85,7 +80,11 @@ export const codeGenerator = ({
 
           await Promise.all([
             fetch(host),
-            updateArtifact(chatId, sandboxId, object, host),
+            updateArtifact(chatId, {
+              sandbox_id: sandboxId,
+              sandbox_url: host,
+              code: object,
+            }),
           ]);
 
           dataStream.write({

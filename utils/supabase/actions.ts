@@ -1,4 +1,4 @@
-import { codeGenerationOutputType } from "@/app/api/chat/schema";
+import { CodeData } from "@/types/data/code";
 import { Json } from "@/types/database.types";
 import { UIMessage } from "ai";
 import { v7 as uuidv7 } from "uuid";
@@ -91,15 +91,20 @@ const getArtifactByChatId = async (chatId: string) => {
 
 const updateArtifact = async (
   chatId: string,
-  sandboxId: string,
-  code: codeGenerationOutputType,
-  sandboxUrl: string
+  update: {
+    sandbox_id?: string;
+    sandbox_url?: string;
+    code?: CodeData;
+  }
 ) => {
   const supabase = await createClient();
-  await supabase
+  const { data } = await supabase
     .from("artifacts")
-    .update({ sandbox_id: sandboxId, code, sandbox_url: sandboxUrl })
-    .eq("chat_id", chatId);
+    .update(update)
+    .eq("chat_id", chatId)
+    .select()
+    .single();
+  return data;
 };
 
 export {
