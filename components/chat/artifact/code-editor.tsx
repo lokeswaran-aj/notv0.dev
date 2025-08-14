@@ -50,9 +50,7 @@ export const CodeEditor = () => {
         ) : codeGenerationStarted ? (
           <div className="h-full w-full flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin" />
-            <p className="text-sm text-muted-foreground">
-              Code generation started
-            </p>
+            <p className="text-sm text-muted-foreground">Generating code...</p>
           </div>
         ) : (
           <div className="h-full w-full flex items-center justify-center">

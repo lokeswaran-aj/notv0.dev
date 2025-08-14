@@ -1,4 +1,4 @@
-import { TreeNodeType } from "@/types/message";
+import { TreeNodeType } from "@/types/data/code";
 
 export const buildTreeFromFiles = (filePaths: string[]): TreeNodeType[] => {
   const root: TreeNodeType[] = [];

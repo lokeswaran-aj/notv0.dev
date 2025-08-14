@@ -3,7 +3,7 @@ import { File } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useFiles } from "@/stores/use-files";
-import { TreeNodeType } from "@/types/message";
+import { TreeNodeType } from "@/types/data/code";
 import { VerticalLine } from "./vertical-line";
 
 type Props = {

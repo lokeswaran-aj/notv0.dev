@@ -6,8 +6,8 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { convertToUIMessages } from "@/lib/utils";
+import { CodeData } from "@/types/data/code";
 import { Tables } from "@/types/database.types";
-import { CodeData } from "@/types/message";
 import { createSandbox, getSandbox } from "@/utils/e2b";
 import {
   getArtifactByChatId,

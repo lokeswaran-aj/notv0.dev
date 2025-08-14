@@ -4,7 +4,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { TreeNodeType } from "@/types/message";
+import { TreeNodeType } from "@/types/data/code";
 import { ChevronRight } from "lucide-react";
 import { TreeNode } from "./tree-node";
 import { VerticalLine } from "./vertical-line";

@@ -1,4 +1,4 @@
-import { Code } from "@/types/message";
+import { Code } from "@/types/data/code";
 import { create } from "zustand";
 
 const INITIAL_STATE = {

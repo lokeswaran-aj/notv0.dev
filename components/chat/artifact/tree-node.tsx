@@ -1,4 +1,4 @@
-import { TreeNodeType } from "@/types/message";
+import { TreeNodeType } from "@/types/data/code";
 import { FileNode } from "./file-node";
 import { FolderNode } from "./folder-node";
 
