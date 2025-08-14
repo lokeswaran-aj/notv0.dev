@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { UIMessage } from "ai";
 import { Fragment } from "react";
 import { MessageActions, MessageContent } from "../ui/message";
-import { CopyMessageAction } from "./copy-message-action";
+import { CopyAction } from "../user-actions/copy-action";
 
 type Props = {
   message: UIMessage;
@@ -25,7 +25,7 @@ export const UserMessage = (props: Props) => {
                   "flex gap-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
                 )}
               >
-                <CopyMessageAction message={part.text} />
+                <CopyAction text={part.text} />
               </MessageActions>
             </Fragment>
           );

@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { UIMessage } from "ai";
 import { MessageActions, MessageContent } from "../ui/message";
 import { Reasoning, ReasoningContent, ReasoningTrigger } from "../ui/reasoning";
-import { CopyMessageAction } from "./copy-message-action";
+import { CopyAction } from "../user-actions/copy-action";
 import { RegenerateAction } from "./regenerate-action";
 
 type Props = {
@@ -50,8 +50,8 @@ export const AiMessage = (props: Props) => {
           !isStreaming && "group-hover:opacity-100"
         )}
       >
-        <CopyMessageAction
-          message={message.parts
+        <CopyAction
+          text={message.parts
             .filter((part) => part.type === "text")
             .map((part) => part.text)
             .join("")}

@@ -13,6 +13,7 @@ import { useMemo } from "react";
 
 export const ModelSelector = () => {
   const { model, setModel } = useModel();
+
   const modelGroups = useMemo(() => {
     const byProvider: Record<string, Model[]> = {};
     for (const m of AI_MODELS) {
@@ -28,7 +29,7 @@ export const ModelSelector = () => {
       value={model}
       onValueChange={setModel}
       required
-      defaultValue={AI_MODELS[0].id}
+      defaultValue={model ?? AI_MODELS[0].id}
     >
       <SelectTrigger className="rounded-2xl focus-visible:ring-0 focus-visible:border-secondary dark:bg-background bg-background">
         <SelectValue placeholder="Select a model" />

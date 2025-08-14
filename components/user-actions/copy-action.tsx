@@ -4,9 +4,10 @@ import { Button } from "../ui/button";
 import { MessageAction } from "../ui/message";
 
 type Props = {
-  message: string;
+  text: string;
 };
-export const CopyMessageAction = ({ message }: Props) => {
+
+export const CopyAction = ({ text }: Props) => {
   const [isCopied, setIsCopied] = useState(false);
   return (
     <MessageAction
@@ -19,7 +20,7 @@ export const CopyMessageAction = ({ message }: Props) => {
         size="icon"
         className="rounded-full"
         onClick={() => {
-          navigator.clipboard.writeText(message);
+          navigator.clipboard.writeText(text);
           setIsCopied(true);
           setTimeout(() => {
             setIsCopied(false);
