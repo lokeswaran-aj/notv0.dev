@@ -59,11 +59,13 @@ const ChatPage = async (props: { params: Promise<{ id: string }> }) => {
         const sandbox = await Sandbox.connect(sandboxId);
         sandbox.setTimeout(constants.SANDBOX_TIMEOUT);
         const existingFiles = (oldArtifact.code as CodeData).files;
-        for (const file of existingFiles) {
-          if (file.filePath && file.code) {
-            await sandbox.files.write(file.filePath, file.code);
-          }
-        }
+        await Promise.all(
+          existingFiles.map(async ({ filePath, code }) => {
+            if (filePath && code) {
+              await sandbox.files.write(filePath, code);
+            }
+          })
+        );
         const host = `https://${sandbox.getHost(3000)}`;
         const [_, updatedArtifact] = await Promise.all([
           fetch(host),
