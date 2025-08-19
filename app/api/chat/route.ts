@@ -115,9 +115,13 @@ export const POST = async (req: NextRequest) => {
             }),
           },
           experimental_transform: smoothStream({ chunking: "word" }),
-          onFinish: (result) => {
-            console.log("chatUsage:");
-            console.dir(result.totalUsage, { depth: null });
+          experimental_telemetry: {
+            isEnabled: true,
+            metadata: {
+              ls_run_name: "chat-route",
+              chatId,
+              environment: process.env.NODE_ENV,
+            },
           },
           stopWhen: stepCountIs(5),
         });

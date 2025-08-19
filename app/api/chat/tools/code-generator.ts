@@ -43,19 +43,20 @@ export const codeGenerator = ({
         schema: codeGenerationOutputSchema,
         system: codeGenerationSystemPrompt,
         prompt,
+        experimental_telemetry: {
+          isEnabled: true,
+          metadata: {
+            ls_run_name: "code-generator-tool",
+            chatId,
+            environment: process.env.NODE_ENV,
+          },
+        },
 
         onError: (error) => {
           console.error(error);
         },
 
-        onFinish: async ({ object, usage, warnings, error }) => {
-          console.log("codeGenerator usage:");
-          console.dir(usage, { depth: null });
-          console.log("codeGenerator error:");
-          console.dir(error, { depth: null });
-          console.log("codeGenerator warnings:");
-          console.dir(warnings, { depth: null });
-
+        onFinish: async ({ object }) => {
           if (!object) {
             console.error("No code was generated");
             return;
