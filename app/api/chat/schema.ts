@@ -32,14 +32,6 @@ export const codeGenerationOutputSchema = z.object({
       })
     )
     .describe("The files to be created or updated"),
-  summary: z
-    .string()
-    .describe("A summary of the changes made to the code.")
-    .max(500),
 });
 
 export type postRequestBodyType = z.infer<typeof postRequestBodySchema>;
-
-export type codeGenerationOutputType = z.infer<
-  typeof codeGenerationOutputSchema
->;

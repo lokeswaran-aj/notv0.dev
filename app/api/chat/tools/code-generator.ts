@@ -7,7 +7,6 @@ import {
   UIMessage,
   UIMessageStreamWriter,
 } from "ai";
-import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
 import { codeGenerationSystemPrompt } from "../prompt";
 import { codeGenerationOutputSchema } from "../schema";
@@ -25,12 +24,12 @@ export const codeGenerator = ({
     description:
       "A Software Engineer that can build modern Next.js web applications",
     inputSchema: z.object({ prompt: z.string() }),
-    execute: async ({ prompt }) => {
-      const id = uuidv7();
+    execute: async ({ prompt }, { messages, toolCallId }) => {
       dataStream.write({
+        id: toolCallId,
         type: "data-id",
         data: {
-          id,
+          toolCallId,
         },
         transient: true,
       });
@@ -42,7 +41,7 @@ export const codeGenerator = ({
         schemaDescription: "The code to be written to the file",
         schema: codeGenerationOutputSchema,
         system: codeGenerationSystemPrompt,
-        prompt,
+        messages: [...messages, { role: "user", content: prompt }],
         experimental_telemetry: {
           isEnabled: true,
           metadata: {
@@ -89,17 +88,18 @@ export const codeGenerator = ({
           ]);
 
           dataStream.write({
+            id: toolCallId,
             type: "data-sandboxHost",
             data: {
               host,
             },
             transient: true,
-            id: "data-sandboxHost",
           });
         },
       });
 
       dataStream.write({
+        id: toolCallId,
         type: "data-codeGenerationStarted",
         data: {
           started: true,
@@ -109,17 +109,20 @@ export const codeGenerator = ({
       for await (const partialObject of partialObjectStream) {
         dataStream.write({
           type: "data-code",
-          id: "data-code",
+          id: toolCallId,
           data: {
             files: partialObject.files,
           },
           transient: true,
         });
       }
-
-      return {
-        summary: (await object).summary,
-      };
+      const output = await object;
+      return `Successfully generated and uploaded ${
+        output.files.length
+      } files. Their file paths and codes are as follows:
+        ${output.files
+          .map((file) => `FilePath: ${file.filePath}\nCode: ${file.code}\n`)
+          .join("\n")}`;
     },
   });
 };
