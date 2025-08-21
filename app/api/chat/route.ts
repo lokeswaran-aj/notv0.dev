@@ -1,6 +1,7 @@
 import { AI_MODELS, SharedV2ProviderOptions } from "@/lib/models";
 import { convertToUIMessages } from "@/lib/utils";
 import { openai } from "@ai-sdk/openai";
+import prompt from "./prompt.md";
 
 import {
   createArtifact,
@@ -23,7 +24,6 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import { v7 as uuidv7 } from "uuid";
 import { generateTitleFromUserMessage } from "./actions";
-import { generalSystemPrompt } from "./prompt";
 import { postRequestBodySchema, postRequestBodyType } from "./schema";
 import { codeGenerator } from "./tools/code-generator";
 
@@ -105,7 +105,7 @@ export const POST = async (req: NextRequest) => {
           model,
           providerOptions,
           temperature: 1,
-          system: generalSystemPrompt,
+          system: prompt,
           messages: modelMessages,
           tools: {
             codeGenerator: codeGenerator({

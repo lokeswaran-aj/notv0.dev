@@ -8,8 +8,9 @@ import {
   UIMessageStreamWriter,
 } from "ai";
 import { z } from "zod";
-import { codeGenerationSystemPrompt } from "../prompt";
 import { codeGenerationOutputSchema } from "../schema";
+import generateFilesDescription from "./generate-files-description.md";
+import generateFilesPrompt from "./generate-files-prompt.md";
 
 export const codeGenerator = ({
   dataStream,
@@ -21,8 +22,7 @@ export const codeGenerator = ({
   model: LanguageModel;
 }) => {
   return tool({
-    description:
-      "A Software Engineer that can build modern Next.js web applications",
+    description: generateFilesDescription,
     inputSchema: z.object({ prompt: z.string() }),
     execute: async ({ prompt }, { messages, toolCallId }) => {
       dataStream.write({
@@ -40,7 +40,7 @@ export const codeGenerator = ({
         schemaName: "code",
         schemaDescription: "The code to be written to the file",
         schema: codeGenerationOutputSchema,
-        system: codeGenerationSystemPrompt,
+        system: generateFilesPrompt,
         messages: [...messages, { role: "user", content: prompt }],
         experimental_telemetry: {
           isEnabled: true,
