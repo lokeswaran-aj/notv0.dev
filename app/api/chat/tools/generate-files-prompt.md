@@ -18,3 +18,5 @@ Create a set of files based on the current state of the project and conversation
 5. Do not include placeholder comments like “TODO” unless explicitly instructed.
 6. Assume any previously generated files already exist in the sandbox — write with compatibility in mind.
 7. Favor minimal, functional implementations that demonstrate correctness and are ready to be run, built, or extended.
+8. Do not forget to update the metadata file in the \`app/layout.tsx\` file.
+9. Do not put all the code in a single file. Modularize the code.

@@ -107,14 +107,20 @@ export const codeGenerator = ({
         transient: true,
       });
       for await (const partialObject of partialObjectStream) {
-        dataStream.write({
-          type: "data-code",
-          id: toolCallId,
-          data: {
-            files: partialObject.files,
-          },
-          transient: true,
-        });
+        if (
+          partialObject.files &&
+          Array.isArray(partialObject.files) &&
+          partialObject.files.length > 0
+        ) {
+          dataStream.write({
+            type: "data-code",
+            id: toolCallId,
+            data: {
+              files: partialObject.files,
+            },
+            transient: true,
+          });
+        }
       }
       const output = await object;
       return `Successfully generated and uploaded ${
