@@ -22,6 +22,7 @@ export const codeGenerator = ({
   model: LanguageModel;
 }) => {
   return tool({
+    name: "generate-files",
     description: generateFilesDescription,
     inputSchema: z.object({ prompt: z.string() }),
     execute: async ({ prompt }, { messages, toolCallId }) => {
