@@ -20,3 +20,4 @@ Create a set of files based on the current state of the project and conversation
 7. Favor minimal, functional implementations that demonstrate correctness and are ready to be run, built, or extended.
 8. Do not forget to update the metadata file in the \`app/layout.tsx\` file.
 9. Do not put all the code in a single file. Modularize the code.
+10. Never forget to add "use client" to the top of the TSX file when using any hooks or events that can be executed only in the browser.
