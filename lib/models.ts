@@ -36,42 +36,42 @@ const openaiProviderOptions = {
 };
 
 export const AI_MODELS: Model[] = [
-  {
-    id: "claude-sonnet-4-20250514",
-    provider: "Anthropic",
-    model: "Claude Sonnet 4",
-    providerOptions: anthropicProviderOptions,
-  },
-  {
-    id: "claude-3-7-sonnet-20250219",
-    provider: "Anthropic",
-    model: "Claude 3.7 Sonnet",
-    providerOptions: anthropicProviderOptions,
-  },
-  {
-    id: "claude-3-5-sonnet-latest",
-    provider: "Anthropic",
-    model: "Claude 3.5 Sonnet",
-    providerOptions: anthropicProviderOptions,
-  },
-  {
-    id: "claude-3-5-haiku-latest",
-    provider: "Anthropic",
-    model: "Claude 3.5 Haiku",
-    providerOptions: anthropicProviderOptions,
-  },
-  {
-    id: "claude-3-sonnet-20240229",
-    provider: "Anthropic",
-    model: "Claude 3 Sonnet",
-    providerOptions: anthropicProviderOptions,
-  },
-  {
-    id: "claude-3-haiku-20240307",
-    provider: "Anthropic",
-    model: "Claude 3 Haiku",
-    providerOptions: anthropicProviderOptions,
-  },
+  // {
+  //   id: "claude-sonnet-4-20250514",
+  //   provider: "Anthropic",
+  //   model: "Claude Sonnet 4",
+  //   providerOptions: anthropicProviderOptions,
+  // },
+  // {
+  //   id: "claude-3-7-sonnet-20250219",
+  //   provider: "Anthropic",
+  //   model: "Claude 3.7 Sonnet",
+  //   providerOptions: anthropicProviderOptions,
+  // },
+  // {
+  //   id: "claude-3-5-sonnet-latest",
+  //   provider: "Anthropic",
+  //   model: "Claude 3.5 Sonnet",
+  //   providerOptions: anthropicProviderOptions,
+  // },
+  // {
+  //   id: "claude-3-5-haiku-latest",
+  //   provider: "Anthropic",
+  //   model: "Claude 3.5 Haiku",
+  //   providerOptions: anthropicProviderOptions,
+  // },
+  // {
+  //   id: "claude-3-sonnet-20240229",
+  //   provider: "Anthropic",
+  //   model: "Claude 3 Sonnet",
+  //   providerOptions: anthropicProviderOptions,
+  // },
+  // {
+  //   id: "claude-3-haiku-20240307",
+  //   provider: "Anthropic",
+  //   model: "Claude 3 Haiku",
+  //   providerOptions: anthropicProviderOptions,
+  // },
   {
     id: "gpt-4.1",
     provider: "OpenAI",
